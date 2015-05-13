@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<form action='/search-amazon'>
+	<label>Search:
+		<select name='category'>
+			<option value='Apparel'>Apparel</option>
+			<option value='Beauty'>Beauty</option>
+			<option value='Books'>Books</option>
+			<option value='Electronics'>Electronics</option>
+			<option value='Shoes'>Shoes</option>
+			<option value='Tools'>Tools</option>
+			<option value='Toys'>Toys</option>
+		</select>
+		<input type='search' name='user_input'>
+	</label>
+	<input type='submit'>
+</form>
+
+{% endblock %}

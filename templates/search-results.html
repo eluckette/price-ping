@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Search Results</h1>
+
+{% for item in search_results %}
+	{{ loop.index }}
+	
+	<h3>{{ item.ItemAttributes.Title }}</h3>
+	<img src='{{ item.ImageSets.ImageSet.MediumImage.URL }}'>
+	<p>Price: {{ item.Offers.Offer.OfferListing.Price.FormattedPrice }}</p>
+	
+	<form action='/show-item' method='POST'>
+		<input type='hidden' name='item_asin' value='{{ item.ASIN }}'>
+		<input type='hidden' name='item_title' value='{{ item.ItemAttributes.Title }}'>
+		<input type='hidden' name='item_image_url' value='{{ item.ImageSets.ImageSet.MediumImage.URL }}'>
+		<input type='hidden' name='item_price' value='{{ item.Offers.Offer.OfferListing.Price.Amount }}'>
+		<input type='hidden' name='item_price_f' value='{{ item.Offers.Offer.OfferListing.Price.FormattedPrice }}'>
+		<input type='hidden' name='item_url' value='{{ item.ItemLinks.ItemLink.URL }}'>
+		<input type='submit'>
+	</form>
+{% endfor %}
+
+{% endblock %}

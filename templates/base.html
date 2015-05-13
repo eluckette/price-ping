@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>X HB Project X</title>
+</head>
+
+<body>
+    <!-- Show flashed messages -->
+    {% with messages = get_flashed_messages() %}
+    {% for message in messages %}
+    <div class="alert alert-warning">{{ message }}</div>
+    {% endfor %}
+    {% endwith %}
+
+    <!-- This is where the main content goes. -->
+    {% block content %}
+    BODY OF PAGE GOES HERE VIA INHERITANCE
+    {% endblock %}
+</body>
+</html>
