@@ -13,23 +13,32 @@ config = {
 api = amazonproduct.API(cfg=config)
 
 
-# amazon_search = api.item_search('Toys', Keywords='Lego', MerchantId='Amazon', ResponseGroup='Offers, ItemAttributes, Images')
+amazon_search = api.item_search('Toys', Keywords='Lego', MerchantId='Amazon', ResponseGroup='Offers, ItemAttributes, Images')
 
-# for item in amazon_search:
+print amazon_search.results;
+print amazon_search.pages;
+
+count = 1
+
+for amazon_search.pages:
+	from item in amazon_search:
+		print count
+		count = count + 1
+
+# 	print dir(item.ItemAttributes)
 # 	print "ASIN: ", item.ASIN
 # 	print "Price: ", item.Offers.Offer.OfferListing.Price.FormattedPrice
 # 	print "Link: ", item.ItemLinks.ItemLink.URL
 
-# print '******************************************************************************'
 
-legos = api.item_lookup('B00NHQFA1I', MerchantId='Amazon', ResponseGroup='Offers, Images, ItemAttributes')
+# legos = api.item_lookup('B00NHQFA1I', MerchantId='Amazon', ResponseGroup='Offers, Images, ItemAttributes')
 
-print "ASIN: ", legos.Items.Item.ASIN
-print "Parent ASIN: ", legos.Items.Item.ASIN
-print "More offers URL: ", legos.Items.Item.Offers.MoreOffersUrl
-print "Offer Listing ID: ", legos.Items.Item.Offers.Offer.OfferListing.OfferListingId
-print "Amount: ", legos.Items.Item.Offers.Offer.OfferListing.Price.Amount
-print "Formatted Price: ", legos.Items.Item.Offers.Offer.OfferListing.Price.FormattedPrice
+# print "ASIN: ", legos.Items.Item.ASIN
+# print "Parent ASIN: ", legos.Items.Item.ASIN
+# print "More offers URL: ", legos.Items.Item.Offers.MoreOffersUrl
+# print "Offer Listing ID: ", legos.Items.Item.Offers.Offer.OfferListing.OfferListingId
+# print "Amount: ", legos.Items.Item.Offers.Offer.OfferListing.Price.Amount
+# print "Formatted Price: ", legos.Items.Item.Offers.Offer.OfferListing.Price.FormattedPrice
 
 # Image: http://ecx.images-amazon.com/images/I/51wH8x4c-hL._SL160_.jpg
 # ASIN: B00NHQFA1I
@@ -43,10 +52,5 @@ print "Formatted Price: ", legos.Items.Item.Offers.Offer.OfferListing.Price.Form
 # FORMATTED AMOUNT:  $25.50
 # FEATURES: None
 
-
-
-	# <label>Phone Number:
-	# 	<input type='tel' pattern='[0-9]{10}' 
-	# 	title='Phone Number (Format: 19999999999)' name='phone_number' required>
-	# </label>
+# import ipdb; ipdb.set_trace()
 

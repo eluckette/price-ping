@@ -1,24 +1,77 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<div class='container'>
 <h1>Search Results</h1>
 
 {% for item in search_results %}
-	{{ loop.index }}
 	
-	<h3>{{ item.ItemAttributes.Title }}</h3>
+	<h3 id='item-title'>{{ item.ItemAttributes.Title }}</h3>
 	<img src='{{ item.ImageSets.ImageSet.MediumImage.URL }}'>
-	<p>Price: {{ item.Offers.Offer.OfferListing.Price.FormattedPrice }}</p>
+	<p>Price: {{ item.Offers.Offer.OfferListing.Price.FormattedPrice }}</p>	
+
+	<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#{{item.ASIN}}'>
+		Set Notification</button>
+
+	<!-- Modal Shows When Button Clicked -->
+	<div class="modal fade" id="{{ item.ASIN }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">Set Price Notification</h4>
+	      </div>
+
+	      <div class="modal-body">
+
+			<div class='item-info' data-asin="{{ item.ASIN }}"
+								   data-title="{{ item.ItemAttributes.Title }}"
+								   data-price-f="{{ item.Offers.Offer.OfferListing.Price.FormattedPrice }}"
+								   data-price="{{ item.Offers.Offer.OfferListing.Price.Amount }}">
+
+	        <h4>{{ item.ItemAttributes.Title }}</h4>
+	        <p>Current Price: {{ item.Offers.Offer.OfferListing.Price.FormattedPrice }}</p>
+	        <img src='{{ item.ImageSets.ImageSet.MediumImage.URL }}'>
+			
+			<label for="alert-price-field">Set Price:</label>
+			<input type='number' min='0' max='{{ item.Offers.Offer.OfferListing.Price.Amount }}' name='alert_price' id='alert-price-field'>
+
+			<label for='alert-length-field'>Length of Notifcation (Number of Days):</label>
+			<input type='number' min='0' max='5' name='alert_length' id='alert-length-field'>
 	
-	<form action='/show-item' method='POST'>
-		<input type='hidden' name='item_asin' value='{{ item.ASIN }}'>
-		<input type='hidden' name='item_title' value='{{ item.ItemAttributes.Title }}'>
-		<input type='hidden' name='item_image_url' value='{{ item.ImageSets.ImageSet.MediumImage.URL }}'>
-		<input type='hidden' name='item_price' value='{{ item.Offers.Offer.OfferListing.Price.Amount }}'>
-		<input type='hidden' name='item_price_f' value='{{ item.Offers.Offer.OfferListing.Price.FormattedPrice }}'>
-		<input type='hidden' name='item_url' value='{{ item.ItemLinks.ItemLink.URL }}'>
-		<input type='submit'>
-	</form>
-{% endfor %}
+			<button type="button" class="submit-item">Submit</button>
+			
+			</div>
+	      </div>
+	      
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    
+	    </div>
+	  </div>
+	</div>
+	{% endfor %}
+	<script>
+		function saveItemAndAlert(evt) {
+
+			$.post("/alert-data",
+					{title: $(this).parent().data('title'),
+					 asin: $(this).parent().data('asin'), 
+					 price_f: $(this).parent().data('price-f'),
+					 price: $(this).parent().data('price'),
+					 alert_price: $(this).siblings('#alert-price-field').val(),
+					 alert_length: $(this).siblings('#alert-length-field').val() },
+
+				function (result) {
+					console.log(result);
+				});
+		}		
+		$(".item-info > button").on("click", saveItemAndAlert);
+	</script>
+
+
+</div>
 
 {% endblock %}

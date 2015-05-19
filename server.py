@@ -2,7 +2,7 @@ import os
 import amazonproduct
 
 from jinja2 import StrictUndefined
-from flask import Flask, render_template, redirect, request, flash, session
+from flask import Flask, render_template, redirect, request, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from model import User, Product, Alert, connect_to_db, db
 from datetime import datetime
@@ -20,6 +20,11 @@ amazon_api_config = {
 
 api = amazonproduct.API(cfg=amazon_api_config)
 
+@app.route('/test')
+def test():
+	return render_template('confirmation.html')
+
+
 @app.route('/')
 def index():
 
@@ -33,7 +38,7 @@ def handle_search():
 
 	search_results = api.item_search(category, Keywords=user_input, MerchantId='Amazon', 
 									 ResponseGroup='Offers, ItemAttributes, Images')
-	
+
 	return render_template('search-results.html', user_input=user_input, search_results=search_results)
 
 @app.route('/show-item', methods=['POST'])
@@ -45,9 +50,8 @@ def save_item():
 	item_price = int(request.form['item_price'])
 	item_price_f = request.form['item_price_f']
 	item_url = request.form['item_url']
-
-
-	return render_template('set-alert.html', item_asin=item_asin, item_title=item_title, item_image_url=item_image_url, 
+	
+	return render_template('set-alert.html', item_asin=item_asin, item_title=item_title, item_image_url=item_image_url,
 							item_price=item_price, item_price_f=item_price_f, item_url=item_url)
 
 @app.route('/set-alert', methods=['POST'])
@@ -72,11 +76,46 @@ def set_alert():
 	user = User.query.filter_by(user_id=1).one()
 	product = Product.query.filter_by(asin=item_asin, date_entered=date_entered).one()
 	
-	alert = Alert(user_id=user.user_id, product_id=product.product_id, alert_price=alert_price, expiration_date=expiration_date)
+	alert = Alert(user_id=user.user_id, product_id=product.product_id, 
+		          alert_price=alert_price, expiration_date=expiration_date)
+
+	db.session.add(alert)
+	db.session.commit()
+
+	return render_template('confirmation.html')
+
+
+@app.route('/alert-data', methods=['POST'])
+def alert_data():
+
+	date_entered = datetime.utcnow()
+	alert_price = int(request.form['alert_price'])
+	alert_length = int(request.form['alert_length'])
+	expiration_date = date_entered.replace(day=date_entered.day+alert_length)
+
+	asin = request.form['asin']
+	title = request.form['title']
+	price_f = request.form['price_f']
+	price = request.form['price']
+
+	item = Product(title=title, asin=asin, price=price, date_entered=date_entered)
+	db.session.add(item)
+	db.session.commit()
+
+	user = User.query.filter_by(user_id=1).one()
+	product = Product.query.filter_by(asin=asin, date_entered=date_entered).one()
+	alert = Alert(user_id=user.user_id, product_id=product.product_id, 
+		          alert_price=alert_price, expiration_date=expiration_date)
+
 	db.session.add(alert)
 	db.session.commit()
 	
-	return render_template('confirmation.html')
+	return "cool"
+
+
+@app.route('/register')
+def register_user():
+	return render_template('register.html')
 
 if __name__ == "__main__":
  
