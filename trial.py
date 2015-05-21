@@ -1,5 +1,6 @@
 import amazonproduct
 import os
+import json
 # from lxml import objectify
 # import codecs
 
@@ -15,16 +16,67 @@ api = amazonproduct.API(cfg=config)
 
 amazon_search = api.item_search('Toys', Keywords='Lego', MerchantId='Amazon', ResponseGroup='Offers, ItemAttributes, Images')
 
-print amazon_search.results;
-print amazon_search.pages;
+# json_string = {}
 
-count = 1
+# for item in amazon_search:
+# 	json_string['Link'] = item.ItemLinks.ItemLink.URL
 
-for amazon_search.pages:
-	from item in amazon_search:
-		print count
-		count = count + 1
 
+search_dict = {}
+
+for item in amazon_search:
+	search_dict[str(item.ASIN)] = [str(item.ItemAttributes.Title),
+							       str(item.Offers.Offer.OfferListing.Price.FormattedPrice), 
+							       str(item.Offers.Offer.OfferListing.Price.Amount), 
+							       str(item.ItemLinks.ItemLink.URL)]
+
+print type(search_dict)
+jsonarray = json.dumps(search_dict)
+
+
+
+
+
+# print type(amazon_search)
+# print amazon_search.results;
+# print amazon_search.pages;
+
+# print '\n\n\n This is the amazon search page 4', amazon_search.page(4)
+
+
+# print '*****************'
+# for item in amazon_search.page(4):
+# 	print item.Items.Item.ASIN
+# 	print type(item.Items)
+# restrict = 0
+# for item in amazon_search:
+# 	while restrict < 20:
+# 		print "ASIN: ", item.ASIN
+# 		restrict = restrict + 1
+
+
+
+
+# limit = 20
+# for i in range(limit):
+# 	print tyamazon_search[i].ASIN
+
+# for item in amazon_search:
+# 	if restrict >= 20:
+# 		break
+# 	else:
+# 		print "ASIN: ", item.ASIN
+# 		restrict = restrict + 1
+
+# amazon_results = {}
+# restrict = 0
+# for item in amazon_search:
+# 	if restrict >= 20:
+# 		break
+# 	else:
+# 		amazon_results[item.ASIN] = item.ItemLinks.ItemLink.URL
+
+# print amazon_results
 # 	print dir(item.ItemAttributes)
 # 	print "ASIN: ", item.ASIN
 # 	print "Price: ", item.Offers.Offer.OfferListing.Price.FormattedPrice

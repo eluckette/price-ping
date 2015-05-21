@@ -40,19 +40,20 @@
 			<label for='alert-length-field'>Length of Notifcation (Number of Days):</label>
 			<input type='number' min='0' max='5' name='alert_length' id='alert-length-field'>
 	
-			<button type="button" class="submit-item">Submit</button>
+			<button type="button" class="submit-item btn btn-default">Submit</button>
 			
 			</div>
 	      </div>
 	      
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 	      </div>
 	    
 	    </div>
 	  </div>
 	</div>
 	{% endfor %}
+	
 	<script>
 		function saveItemAndAlert(evt) {
 

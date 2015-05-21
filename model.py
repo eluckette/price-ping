@@ -5,7 +5,6 @@ db = SQLAlchemy()
 class User(db.Model):
 
     __tablename__ = "users"
-
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(20), nullable=False)
@@ -15,7 +14,6 @@ class User(db.Model):
 class Product(db.Model):
 
     __tablename__ = "products"
-
     product_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     asin = db.Column(db.String(10), nullable=False)
@@ -40,7 +38,6 @@ class Alert(db.Model):
 class PriceReport(db.Model):
 
     __tablename__ = "priceReports"
-
     price_check_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     alert_id = db.Column(db.Integer, db.ForeignKey('alerts.alert_id'))
     asin = db.Column(db.String(10), db.ForeignKey('products.asin'))
@@ -53,15 +50,13 @@ class PriceReport(db.Model):
     product_asin = db.relationship('Product',
                                     backref=db.backref('priceReports', order_by=price_check_id))
 
-# class Search_Item(object):
+class UserSearch(db.Model):
 
-#     def __init__(self, asin, title, image_url, price, price_formatted):
-#         self.asin = asin
-#         self.title = title
-#         self.image_url = image_url
-#         self.price = price
-#         self.price_formatted = price_formatted
-
+    __tablename__ = "userSearches"
+    user_search_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    category = db.Column(db.String(20), nullable=False)
+    user_input = db.Column(db.String(20), nullable=False)
+    search_results = db.Column(db.Text)
 
 def connect_to_db(app):
     """Connect the database to our Flask app."""

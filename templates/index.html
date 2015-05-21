@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<form action='/search-amazon'>
+<div class='container'>
+
+<form action='/search-amazon' class='form-inline'>
 	<label>Search:
-		<select name='category'>
+		<select name='category' class='form-control'>
 			<option value='Apparel'>Apparel</option>
 			<option value='Beauty'>Beauty</option>
 			<option value='Books'>Books</option>
@@ -14,7 +16,9 @@
 		</select>
 		<input type='search' name='user_input'>
 	</label>
-	<input type='submit'>
+	<input type='submit' class='btn btn-default'>
 </form>
 
+
+</div>
 {% endblock %}

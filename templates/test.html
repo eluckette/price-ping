@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+	<h3>Seach Results</h3>
+
+	<div id="pagination">
+		{% for page in range(pages) %}
+			<button type="button" class="btn btn-primary pagination" id="{{ page + 1 }}">{{ page +1 }}</button>
+		{% endfor %}
+	<div>
+
+	<div id="search_element">
+	</div>
+
+	<!-- Modal Shows When Button Clicked -->
+	<div class="modal fade" id="setNotification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">Set Price Notification</h4>
+	      </div>
+
+	      <div class="modal-body">
+	      </div>
+	      
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	      </div>
+	    
+	    </div>
+	  </div>
+	</div>
+
+</div>
+
+<script>
+	$(document).ready(function() {
+		getResults(1);
+	});
+
+	function refresh(evt) {
+		getResults(evt.currentTarget.id);
+	}
+
+	function getResults(page_number) { 
+		$.get('/paginate-search/'+page_number, function(results){
+			insertResults(results);
+		});
+	}
+
+	function insertResults(results) {
+		$('#search_element').empty();
+		for (item in results) {
+			for (i = 0; i < 20; i++) {
+				$("#search_element").append("<img src="+results[item][i].Image_URL+">"+
+											"<p>"+results[item][i].Title+"</p>"+
+											"<p>"+results[item][i].Price_f+"</p>"+
+											"<button type='button' class='triggerModal btn btn-primary' data-toggle='modal' data-target='#setNotification'>Set Notification</button>"+"<br>");
+			};
+
+			$('.triggerModal').on('click', function(evt) {
+					//console.log(results[item][1]);
+					$(".modal-body").html("<p>"+results[item][1].Title+"</p>"+
+										  "<p>"+results[item][1].Price_f+"</p>");					  
+				});	
+
+		};
+
+
+	}
+
+	$('.pagination').on('click', refresh);
+	
+	
+</script>
+
+{% endblock %}

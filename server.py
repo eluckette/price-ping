@@ -1,10 +1,11 @@
 import os 
 import amazonproduct
 
+import json
 from jinja2 import StrictUndefined
 from flask import Flask, render_template, redirect, request, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
-from model import User, Product, Alert, connect_to_db, db
+from model import User, Product, Alert, UserSearch, connect_to_db, db
 from datetime import datetime
 
 app = Flask(__name__)
@@ -20,11 +21,6 @@ amazon_api_config = {
 
 api = amazonproduct.API(cfg=amazon_api_config)
 
-@app.route('/test')
-def test():
-	return render_template('confirmation.html')
-
-
 @app.route('/')
 def index():
 
@@ -38,51 +34,55 @@ def handle_search():
 
 	search_results = api.item_search(category, Keywords=user_input, MerchantId='Amazon', 
 									 ResponseGroup='Offers, ItemAttributes, Images')
-
-	return render_template('search-results.html', user_input=user_input, search_results=search_results)
-
-@app.route('/show-item', methods=['POST'])
-def save_item():
-
-	item_asin = request.form['item_asin']
-	item_title = request.form['item_title']
-	item_image_url = request.form['item_image_url']
-	item_price = int(request.form['item_price'])
-	item_price_f = request.form['item_price_f']
-	item_url = request.form['item_url']
 	
-	return render_template('set-alert.html', item_asin=item_asin, item_title=item_title, item_image_url=item_image_url,
-							item_price=item_price, item_price_f=item_price_f, item_url=item_url)
-
-@app.route('/set-alert', methods=['POST'])
-def set_alert():
+	# make helper function -- create json
+	search_results_list = []
+	for item in search_results:
+		search_results_list.append({"ASIN": str(item.ASIN),
+								    "Title": str(item.ItemAttributes.Title),
+								    "Image_URL": str(item.ImageSets.ImageSet.MediumImage.URL),
+					       		    "Price_f": str(item.Offers.Offer.OfferListing.Price.FormattedPrice), 
+					       		    "Price": str(item.Offers.Offer.OfferListing.Price.Amount), 
+					       		    "Link": str(item.ItemLinks.ItemLink.URL)})
 	
-	date_entered = datetime.utcnow()
+	search_results_dict = {}
+	search_results_dict["items"] = search_results_list
+	json_string = json.dumps(search_results_dict)
 
-	alert_price = int(request.form['alert_price'])
-	alert_num_days = int(request.form['alert_num_days'])
-	expiration_date = date_entered.replace(day=date_entered.day+alert_num_days )
-
-	item_asin = request.form['item_asin']
-	item_title = request.form['item_title']
-	item_price = int(request.form['item_price'])
-	item_price_f = request.form['item_price_f']
-	item_url = request.form['item_url']
-	
-	item = Product(title=item_title, asin=item_asin, price=item_price, date_entered=date_entered)
-	db.session.add(item)
+	user_search = UserSearch(category=category, user_input=user_input, search_results=json_string)
+	db.session.add(user_search)
 	db.session.commit()
 
-	user = User.query.filter_by(user_id=1).one()
-	product = Product.query.filter_by(asin=item_asin, date_entered=date_entered).one()
-	
-	alert = Alert(user_id=user.user_id, product_id=product.product_id, 
-		          alert_price=alert_price, expiration_date=expiration_date)
+	session['search_id'] = user_search.user_search_id
 
-	db.session.add(alert)
-	db.session.commit()
+	return redirect('/search-results')
 
-	return render_template('confirmation.html')
+@app.route('/search-results')
+def show_results():
+
+	return render_template('test.html', pages=5)
+
+@app.route('/paginate-search/<int:page_number>', methods=['GET'])
+def show_page(page_number):
+
+	search_results = UserSearch.query.filter_by(user_search_id=session['search_id']).first()
+	search = search_results.search_results
+	search = json.loads(search)
+
+	for items in search:
+		if page_number == 1:
+			search[items] = search[items][:20]
+		if page_number == 2:
+			search[items] = search[items][20:40]
+		if page_number == 3:
+			search[items] = search[items][40:60]
+		if page_number == 4:
+			search[items] = search[items][60:80]
+		if page_number == 5:
+			search[items] = search[items][80:100]
+
+	return jsonify(search)
+
 
 
 @app.route('/alert-data', methods=['POST'])
@@ -112,10 +112,55 @@ def alert_data():
 	
 	return "cool"
 
+@app.route('/home')
+def login():
+	return render_template('login.html')
 
-@app.route('/register')
-def register_user():
-	return render_template('register.html')
+@app.route('/login', methods=['POST'])
+def login_user():
+
+	user = User.query.filter_by(email=request.form['email']).first()
+
+	if not user:
+		flash('Invalid login')
+		return render_template('login.html')
+	else:
+		if user and (user.password == request.form['password']):
+			session['username'] = user.user_id
+			flash('Login successful')
+			return redirect('/')
+		else:
+			flash ('Invalid password')
+			return render_template('login.html')
+
+@app.route('/make-json')
+def test():
+
+	current_page = request.args.get('current_page')
+
+	search_results = api.item_search('Toys', Keywords='Lego', MerchantId='Amazon', 
+									 ResponseGroup='Offers, ItemAttributes, Images')
+
+	search_results_list = []
+	for item in search_results:
+		search_results_list.append({"ASIN": str(item.ASIN),
+								    "Title": str(item.ItemAttributes.Title),
+					       		    "Price-f": str(item.Offers.Offer.OfferListing.Price.FormattedPrice), 
+					       		    "Price": str(item.Offers.Offer.OfferListing.Price.Amount), 
+					       		    "Link": str(item.ItemLinks.ItemLink.URL)})
+	
+	search_results_dict = {}
+	search_results_dict["items"] = search_results_list
+
+	json_string = jsonify(search_results_dict)
+
+	return json_string
+
+
+@app.route('/test')
+def show_resultss():
+
+	return render_template('test.html')
 
 if __name__ == "__main__":
  
