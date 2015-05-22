@@ -11,10 +11,11 @@ config = {
 	'locale': 'us'
 }
 
-api = amazonproduct.API(cfg=config)
+# api = amazonproduct.API(cfg=config)
 
 
-amazon_search = api.item_search('Toys', Keywords='Lego', MerchantId='Amazon', ResponseGroup='Offers, ItemAttributes, Images')
+# amazon_search = api.item_search('Toys', Keywords='Lego', MerchantId='Amazon', ResponseGroup='Offers, ItemAttributes, Images')
+
 
 # json_string = {}
 
@@ -22,16 +23,16 @@ amazon_search = api.item_search('Toys', Keywords='Lego', MerchantId='Amazon', Re
 # 	json_string['Link'] = item.ItemLinks.ItemLink.URL
 
 
-search_dict = {}
+# search_dict = {}
 
-for item in amazon_search:
-	search_dict[str(item.ASIN)] = [str(item.ItemAttributes.Title),
-							       str(item.Offers.Offer.OfferListing.Price.FormattedPrice), 
-							       str(item.Offers.Offer.OfferListing.Price.Amount), 
-							       str(item.ItemLinks.ItemLink.URL)]
+# for item in amazon_search:
+# 	search_dict[str(item.ASIN)] = [str(item.ItemAttributes.Title),
+# 							       str(item.Offers.Offer.OfferListing.Price.FormattedPrice), 
+# 							       str(item.Offers.Offer.OfferListing.Price.Amount), 
+# 							       str(item.ItemLinks.ItemLink.URL)]
 
-print type(search_dict)
-jsonarray = json.dumps(search_dict)
+# print type(search_dict)
+# jsonarray = json.dumps(search_dict)
 
 
 
@@ -105,4 +106,10 @@ jsonarray = json.dumps(search_dict)
 # FEATURES: None
 
 # import ipdb; ipdb.set_trace()
+
+
+
+image = 
+
+
 

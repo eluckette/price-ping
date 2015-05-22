@@ -1,20 +1,38 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class='container'>
-<h1>Search Results</h1>
+<div class="container">
+	<h3>Results for X?!</h3>
 
-{% for item in search_results %}
-	
-	<h3 id='item-title'>{{ item.ItemAttributes.Title }}</h3>
-	<img src='{{ item.ImageSets.ImageSet.MediumImage.URL }}'>
-	<p>Price: {{ item.Offers.Offer.OfferListing.Price.FormattedPrice }}</p>	
+	<form action='/search-amazon' class='form-inline'>
+	<label>Search:
+		<select name='category' class='form-control'>
+			<option value='Apparel'>Apparel</option>
+			<option value='Beauty'>Beauty</option>
+			<option value='Books'>Books</option>
+			<option value='Electronics'>Electronics</option>
+			<option value='Shoes'>Shoes</option>
+			<option value='Tools'>Tools</option>
+			<option value='Toys'>Toys</option>
+		</select>
+		<input type='search' name='user_input'>
+	</label>
+	<input type='submit' class='btn btn-default'>
+	</form>
 
-	<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#{{item.ASIN}}'>
-		Set Notification</button>
+	<p>Showing results x?! to x?!</p>
+	<div id="search_element">
+	</div>
+
+	<div id="pagination">
+		{% for page in range(pages) %}
+			<button type="button" class="btn btn-primary pagination" id="{{ page + 1 }}">{{ page +1 }}</button>
+		{% endfor %}
+	<div>
+
 
 	<!-- Modal Shows When Button Clicked -->
-	<div class="modal fade" id="{{ item.ASIN }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="setNotification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      
@@ -24,25 +42,6 @@
 	      </div>
 
 	      <div class="modal-body">
-
-			<div class='item-info' data-asin="{{ item.ASIN }}"
-								   data-title="{{ item.ItemAttributes.Title }}"
-								   data-price-f="{{ item.Offers.Offer.OfferListing.Price.FormattedPrice }}"
-								   data-price="{{ item.Offers.Offer.OfferListing.Price.Amount }}">
-
-	        <h4>{{ item.ItemAttributes.Title }}</h4>
-	        <p>Current Price: {{ item.Offers.Offer.OfferListing.Price.FormattedPrice }}</p>
-	        <img src='{{ item.ImageSets.ImageSet.MediumImage.URL }}'>
-			
-			<label for="alert-price-field">Set Price:</label>
-			<input type='number' min='0' max='{{ item.Offers.Offer.OfferListing.Price.Amount }}' name='alert_price' id='alert-price-field'>
-
-			<label for='alert-length-field'>Length of Notifcation (Number of Days):</label>
-			<input type='number' min='0' max='5' name='alert_length' id='alert-length-field'>
-	
-			<button type="button" class="submit-item btn btn-default">Submit</button>
-			
-			</div>
 	      </div>
 	      
 	      <div class="modal-footer">
@@ -52,27 +51,70 @@
 	    </div>
 	  </div>
 	</div>
-	{% endfor %}
-	
-	<script>
-		function saveItemAndAlert(evt) {
-
-			$.post("/alert-data",
-					{title: $(this).parent().data('title'),
-					 asin: $(this).parent().data('asin'), 
-					 price_f: $(this).parent().data('price-f'),
-					 price: $(this).parent().data('price'),
-					 alert_price: $(this).siblings('#alert-price-field').val(),
-					 alert_length: $(this).siblings('#alert-length-field').val() },
-
-				function (result) {
-					console.log(result);
-				});
-		}		
-		$(".item-info > button").on("click", saveItemAndAlert);
-	</script>
-
 
 </div>
+
+<script>
+	$(document).ready(function() {
+		getResults(1);
+	});
+
+	function refresh(evt) {
+		getResults(evt.currentTarget.id);
+	}
+
+	function getResults(page_number) { 
+		$.get('/paginate-search/'+page_number, function(results){
+			insertResults(results);
+		});
+	}
+
+	function insertResults(results) {
+		$('#search_element').empty();
+		for (item in results) {
+			for (i = 0; i < 20; i++) {
+				$("#search_element").append("<img src="+results[item][i].Image_URL+">"+
+											"<p>"+results[item][i].Title+"</p>"+
+											"<p>"+results[item][i].Price_f+"</p>"+
+											"<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i].ASIN +"' data-title='" +results[item][i].Title +"' data-image='" +results[item][i].Image_URL +"'data-price='" +results[item][i].Price +"' data-price_f='" +results[item][i].Price_f +"'>Set Notification</button>"+"<br>");
+			};
+		};
+		$('.triggerModal').on('click', setModal);	
+	}
+
+	function setModal(evt) {
+
+		var data = $(this).data();
+
+		$('.modal-body').empty();
+		$('.modal-body').html("<img src="+data.image+"> <br>"+ 
+							  data.title+ "<br>" +
+							  data.price_f+ 
+							  "<form> <label for='alert-price-field'>Set Price:</label> <input type='number' min='0' max='100' name='alert-price' id='alert-price-field'> <label for'alert-length-field'>Length of Notification (Days):</label> <input type='number' min='1' max='5' name='alert-length' id='alert-length-field'> </form><button type='button' class='submit-item btn btn-default' data-title='"+data.title+"' data-price='"+data.price+"' data-asin='"+data.asin+"'>Submit</button>");
+		
+		$('#setNotification').modal('show');
+		$('.submit-item').on("click", saveItemAndAlert);
+	}
+	
+	function saveItemAndAlert(evt) {
+		
+		var data = $(this).data();
+		var alert_length = $('#alert-length-field').val();
+		var alert_price = $('#alert-price-field').val();
+
+		$.post("/alert-data", 
+			{asin: data.asin,
+			 title: data.title,
+			 price: data.price,
+			 alert_price: alert_price,
+			 alert_length: alert_length}, 
+
+			function (result) {
+				$('#setNotification').modal('hide');
+		});
+	}	
+
+	$('.pagination').on('click', refresh);
+</script>
 
 {% endblock %}

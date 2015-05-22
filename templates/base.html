@@ -2,22 +2,59 @@
 <html>
 <head>
   <title>X HB Project X</title>
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="https:////maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-    <!-- Show flashed messages -->
-    {% with messages = get_flashed_messages() %}
-    {% for message in messages %}
-    <div class="alert alert-warning">{{ message }}</div>
-    {% endfor %}
-    {% endwith %}
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Search</a></li>
+        </ul>
+        <ul class="nav navbar-nav">
+            <li><a data-toggle="collapse" href="#signIn" aria-expanded="false" aria-controls="signIn">Sign In</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-    <!-- This is where the main content goes. -->
-    {% block content %}
-    BODY OF PAGE GOES HERE VIA INHERITANCE
-    {% endblock %}
+  <div class="collapse" id="signIn">
+    <form action='/login' method='POST' class='form-horizontal'>
+    <div class='form-group'>
+      <label for='userEmail' class='col-sm-2 control-label'>Username:</label>
+      <div class='col-sm-6'>
+        <input type='email' class='form-control' id='userEmail' name='email' required placeholder='Enter a valid email'>
+      </div>
+    </div>
+    <div class='form-group'>
+      <label for='userPassword' class='col-sm-2 control-label'>Password:</label>
+      <div class='col-sm-6'>
+        <input type='password' class='form-control' id='userPassword' name='password' required>
+      </div>
+    </div>
+    <div class='form-group'>
+      <div class='col-sm-offset-2 col-sm-6'>
+        <button type='submit' class='btn btn-default'>Submit</button>
+      </div>
+    </div>
+    </form>
+  </div>
+
+  <!-- Show flashed messages -->
+  {% with messages = get_flashed_messages() %}
+  {% for message in messages %}
+  <div class="alert alert-warning">{{ message }}</div>
+  {% endfor %}
+  {% endwith %}
+
+
+  <!-- This is where the main content goes. -->
+  {% block content %}
+  BODY OF PAGE GOES HERE VIA INHERITANCE
+  {% endblock %}
 </body>
 </html>

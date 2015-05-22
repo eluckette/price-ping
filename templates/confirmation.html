@@ -1,7 +1,54 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h2>Confirm</h2>
+<div class="container">
+	<div class="elements">
+		<div class="row">
+			<div class="col-md-3" id='a'>
+			</div>
+			<div class="col-md-3" id='b'>
+			</div>
+			<div class="col-md-3" id='c'>
+			</div>
+			<div class="col-md-3" id='d'>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-3" id='e'>
+			</div>
+			<div class="col-md-3" id='f'>
+			</div>
+			<div class="col-md-3" id='g'>
+			</div>
+			<div class="col-md-3" id='h'>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-3" id='i'>
+			</div>
+			<div class="col-md-3" id='j'>
+			</div>
+			<div class="col-md-3" id='k'>
+			</div>
+			<div class="col-md-3" id='l'>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	var nums = [1,2,3,4,5,6,7,8,9,10,11,12];
+	var cols = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'];
+
+	i = 0;
+	for (col in cols) {
+		$('#'+cols[col]).html("<p>"+nums[i]+"</p>");
+		i ++;
+	};
+
+</script>
 
 
 {% endblock %}
