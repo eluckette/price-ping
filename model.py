@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 class User(db.Model):
 
     __tablename__ = "users"
@@ -20,6 +21,7 @@ class Product(db.Model):
     price = db.Column(db.Integer, nullable=False)
     date_entered = db.Column(db.DateTime, nullable=True)
 
+
 class Alert(db.Model):
 
     __tablename__ = "alerts"
@@ -30,10 +32,11 @@ class Alert(db.Model):
     expiration_date = db.Column(db.DateTime, nullable=False)
 
     user = db.relationship('User',
-                            backref=db.backref('alerts', order_by=alert_id))
+                           backref=db.backref('alerts', order_by=alert_id))
 
-    product = db.relationship('Product', 
-                               backref=db.backref('alerts', order_by=alert_id))
+    product = db.relationship('Product',
+                              backref=db.backref('alerts', order_by=alert_id))
+
 
 class PriceReport(db.Model):
 
@@ -44,11 +47,12 @@ class PriceReport(db.Model):
     price = db.Column(db.Integer, nullable=False)
     date_checked = db.Column(db.DateTime, nullable=True)
 
-    alert = db.relationship('Alert', 
-                             backref=db.backref('priceReports', order_by=price_check_id))
+    alert = db.relationship('Alert',
+                            backref=db.backref('priceReports', order_by=price_check_id))
 
     product_asin = db.relationship('Product',
-                                    backref=db.backref('priceReports', order_by=price_check_id))
+                                   backref=db.backref('priceReports', order_by=price_check_id))
+
 
 class UserSearch(db.Model):
 
@@ -57,6 +61,7 @@ class UserSearch(db.Model):
     category = db.Column(db.String(20), nullable=False)
     user_input = db.Column(db.String(20), nullable=False)
     search_results = db.Column(db.Text)
+
 
 def connect_to_db(app):
     """Connect the database to our Flask app."""

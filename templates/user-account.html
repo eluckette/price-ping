@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+	<h3>Current Alerts</h3>
+
+	<div id="user">
+	</div>
+
+	<div id="alerts">
+		<table class="table table-hover" id="alertTable">
+			<tr>
+			</tr>
+		</table>
+	</div>
+
+</div>
+
+<script>
+	
+	$(document).ready(function() {
+		getAccountInfo()
+	});
+
+	function getAccountInfo() {
+		$.get("/get-account", function(results){
+			insertResults(results);
+		});
+	}
+
+	function insertResults(results) {	
+
+	    var table = document.getElementById("alertTable");
+
+		for (alert in results) {
+			for (i = 0; i < results[alert].length ; i++) {
+				var row = table.insertRow(1);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				
+				cell1.innerHTML = "<button>Delete Alert</button>";
+				cell2.innerHTML = "<p>"+results[alert][i].Title+"</p>"+
+								  "<p>"+results[alert][i].Alert_price+"</p>"+
+								  "<p>"+results[alert][i].Expiration_date+"</p>";		
+			};
+		};
+	}
+</script>
+
+{% endblock %}

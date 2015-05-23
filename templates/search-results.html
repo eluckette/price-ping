@@ -19,8 +19,14 @@
 	</label>
 	<input type='submit' class='btn btn-default'>
 	</form>
-
+	
 	<p>Showing results x?! to x?!</p>
+	<table class="table" id="searchTable">
+		<tr>
+		</tr>
+	</table>
+
+	
 	<div id="search_element">
 	</div>
 
@@ -32,7 +38,7 @@
 
 
 	<!-- Modal Shows When Button Clicked -->
-	<div class="modal fade" id="setNotification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="setNotification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="false">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      
@@ -67,16 +73,49 @@
 		$.get('/paginate-search/'+page_number, function(results){
 			insertResults(results);
 		});
+		$('html,body').scrollTop(0)
 	}
 
 	function insertResults(results) {
-		$('#search_element').empty();
+		// $('#search_element').empty();
+		for(var i=document.getElementById("searchTable").rows.length; i>1; i--) {
+			document.getElementById("searchTable").deleteRow(i-1);
+		}
+
+		var table = document.getElementById("searchTable");
+
 		for (item in results) {
-			for (i = 0; i < 20; i++) {
-				$("#search_element").append("<img src="+results[item][i].Image_URL+">"+
-											"<p>"+results[item][i].Title+"</p>"+
-											"<p>"+results[item][i].Price_f+"</p>"+
-											"<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i].ASIN +"' data-title='" +results[item][i].Title +"' data-image='" +results[item][i].Image_URL +"'data-price='" +results[item][i].Price +"' data-price_f='" +results[item][i].Price_f +"'>Set Notification</button>"+"<br>");
+			for (i = 0; i < 20; i=i+4) {
+				// $("#search_element").append("<img src="+results[item][i].Image_URL+">"+
+				// 							"<p>"+results[item][i].Title+"</p>"+
+				// 							"<p>"+results[item][i].Price_f+"</p>"+
+				// 							"<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i].ASIN +"' data-title='" +results[item][i].Title +"' data-image='" +results[item][i].Image_URL +"'data-price='" +results[item][i].Price +"' data-price_f='" +results[item][i].Price_f +"'>Set Notification</button>"+"<br>")
+
+				var row = table.insertRow(1);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				var cell3 = row.insertCell(2);
+				var cell4 = row.insertCell(3);
+
+				cell1.innerHTML = "<img src="+results[item][i].Image_URL+">"+
+								  "<p>"+results[item][i].Title+"</p>"+
+								  "<p>"+results[item][i].Price_f+"</p>"+
+								  "<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i].ASIN +"' data-title='" +results[item][i].Title +"' data-image='" +results[item][i].Image_URL +"'data-price='" +results[item][i].Price +"' data-price_f='" +results[item][i].Price_f +"'>Set Notification</button>"+"<br>";
+				
+				cell2.innerHTML = "<img src="+results[item][i+1].Image_URL+">"+
+								  "<p>"+results[item][i+1].Title+"</p>"+
+								  "<p>"+results[item][i+1].Price_f+"</p>"+
+								  "<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i+1].ASIN +"' data-title='" +results[item][i+1].Title +"' data-image='" +results[item][i+1].Image_URL +"'data-price='" +results[item][i+1].Price +"' data-price_f='" +results[item][i+1].Price_f +"'>Set Notification</button>"+"<br>";
+				
+				cell3.innerHTML = "<img src="+results[item][i+2].Image_URL+">"+
+								  "<p>"+results[item][i+2].Title+"</p>"+
+								  "<p>"+results[item][i+2].Price_f+"</p>"+
+								  "<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i+2].ASIN +"' data-title='" +results[item][i+2].Title +"' data-image='" +results[item][i+2].Image_URL +"'data-price='" +results[item][i+2].Price +"' data-price_f='" +results[item][i+2].Price_f +"'>Set Notification</button>"+"<br>";
+				
+				cell4.innerHTML = "<img src="+results[item][i+3].Image_URL+">"+
+								  "<p>"+results[item][i+3].Title+"</p>"+
+								  "<p>"+results[item][i+3].Price_f+"</p>"+
+								  "<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i+3].ASIN +"' data-title='" +results[item][i+3].Title +"' data-image='" +results[item][i+3].Image_URL +"'data-price='" +results[item][i+3].Price +"' data-price_f='" +results[item][i+3].Price_f +"'>Set Notification</button>"+"<br>";
 			};
 		};
 		$('.triggerModal').on('click', setModal);	

@@ -13,10 +13,15 @@
     <div class="container-fluid">
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Search</a></li>
+          <li class="active"><a href="/">Search</a></li>
         </ul>
         <ul class="nav navbar-nav">
+            {% if 'username' not in session %}
             <li><a data-toggle="collapse" href="#signIn" aria-expanded="false" aria-controls="signIn">Sign In</a></li>
+            {% else %}
+            <li><a href="/user-account">My Account</a></li>
+            <li><a href="/logout">Log Out</a></li>
+            {% endif %}
         </ul>
       </div>
     </div>
