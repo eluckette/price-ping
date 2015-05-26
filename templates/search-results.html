@@ -97,10 +97,10 @@
 				var cell3 = row.insertCell(2);
 				var cell4 = row.insertCell(3);
 
-				cell1.innerHTML = "<img src="+results[item][i].Image_URL+">"+
-								  "<p>"+results[item][i].Title+"</p>"+
-								  "<p>"+results[item][i].Price_f+"</p>"+
-								  "<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i].ASIN +"' data-title='" +results[item][i].Title +"' data-image='" +results[item][i].Image_URL +"'data-price='" +results[item][i].Price +"' data-price_f='" +results[item][i].Price_f +"'>Set Notification</button>"+"<br>";
+				cell1.innerHTML = "<img src="+results[item][i].Image_URL+">"+"<br>"+
+								  "<a href='#' class='triggerModal' data-target='#setNotification' data-asin='" +results[item][i].ASIN +"' data-title='" +results[item][i].Title +"' data-image='" +results[item][i].Image_URL +"'data-price='" +results[item][i].Price +"' data-price_f='" +results[item][i].Price_f +"'>"+results[item][i].Title+"</a>"+"<br>"+
+								  "<p>"+results[item][i].Price_f+"</p>";
+
 				
 				cell2.innerHTML = "<img src="+results[item][i+1].Image_URL+">"+
 								  "<p>"+results[item][i+1].Title+"</p>"+
