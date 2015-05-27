@@ -1,23 +1,66 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class='container'>
+<div class="container">
 
-<form action='/search-amazon' class='form-inline'>
-	<label>Search:
-		<select name='category' class='form-control'>
-			<option value='Apparel'>Apparel</option>
-			<option value='Beauty'>Beauty</option>
-			<option value='Books'>Books</option>
-			<option value='Electronics'>Electronics</option>
-			<option value='Shoes'>Shoes</option>
-			<option value='Tools'>Tools</option>
-			<option value='Toys'>Toys</option>
-		</select>
-		<input type='search' name='user_input'>
-	</label>
-	<input type='submit' class='btn btn-default'>
-</form>
+<div class="row">
+	<div class="col-lg-4">
+		<div class="input-group">
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Category <span class="caret"></span></button>
+				<ul class="dropdown-menu" role="menu">
+				<li><a href="#">Apparel</a></li>
+				<li><a href="#">Beauty</a></li>
+				<li><a href="#">Books</a></li>
+				<li><a href="#">Electronics</a></li>
+				<li><a href="#">Tools</a></li>
+				<li><a href="#">Toys</a></li>
+				</ul>
+			</div>
+
+			<input type="text" class="form-control" id="userSearch">
+			
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default submitSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<h3>Popular Searches</h3>
+</div>
+
+<script>
+	$(".dropdown-menu li a").click(function(){
+		  $(this).parents(".input-group-btn").find('.btn').text($(this).text());
+		  $(this).parents(".input-group-btn").find('.btn').val($(this).text());
+	});
+
+	function sendSearch(evt) {
+		var category = $('.dropdown-menu').parents(".input-group-btn").find('.btn').val();
+		var userSearch = $("#userSearch").val();
+
+		var form = document.createElement("form");
+		var inputCategory = document.createElement('input');
+		var inputSearch = document.createElement('input');
+
+		$(form).attr("action", "/search-results");
+
+		$(inputCategory).attr("value", category);
+		$(inputCategory).attr("name", "category");
+
+		$(inputSearch).attr("value", userSearch);
+		$(inputSearch).attr("name", "user_input");
+
+		form.appendChild(inputCategory);
+		form.appendChild(inputSearch);
+
+		form.submit();
+	}
+	$(".submitSearch").on('click', sendSearch);
+</script>
 
 </div>
 {% endblock %}

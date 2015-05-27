@@ -2,49 +2,96 @@
 {% block content %}
 
 <div class="container">
-	<h3>Current Alerts</h3>
-
-	<div id="user">
+	<div class="row">
+		<div id="user">
+		</div>
 	</div>
 
-	<div id="alerts">
-		<table class="table table-hover" id="alertTable">
-			<tr>
-			</tr>
-		</table>
+	<div class="row">
+		<div class="col-md-6" id="alerts">
+			<h3>Current Alerts</h3>
+			<table class="table table-hover" id="alertTable">
+				<tr>
+				</tr>
+			</table>
+		</div>
+
+		<div class="col-md-1">
+		</div>
+
+
+		<div class="col-md-4" id="prevViewed">
+			<h3>Recent Searches</h3>
+			<table class="table table-hover" id="searchTable">
+				<tr>
+				</tr>
+			</table>
+		</div>
 	</div>
 
 </div>
 
 <script>
-	
 	$(document).ready(function() {
 		getAccountInfo()
 	});
 
 	function getAccountInfo() {
-		$.get("/get-account", function(results){
-			insertResults(results);
+		$.get("/get-current-alerts", function(results){
+			insertAlerts(results);
+		});
+
+		$.get("/get-user-searches", function(results){
+			insertSearches(results);
 		});
 	}
 
-	function insertResults(results) {	
+	function insertAlerts(results) {	
 
 	    var table = document.getElementById("alertTable");
 
 		for (alert in results) {
-			for (i = 0; i < results[alert].length ; i++) {
+			for (i = 0; i < results[alert].length; i++) {
 				var row = table.insertRow(1);
 				var cell1 = row.insertCell(0);
 				var cell2 = row.insertCell(1);
 				
-				cell1.innerHTML = "<button>Delete Alert</button>";
+				cell1.innerHTML = "<button class='btn btn-default delItem' data-alert_id='"+results[alert][i].Alert_id+"'>Delete</button>";
 				cell2.innerHTML = "<p>"+results[alert][i].Title+"</p>"+
 								  "<p>"+results[alert][i].Alert_price+"</p>"+
 								  "<p>"+results[alert][i].Expiration_date+"</p>";		
 			};
 		};
 	}
+
+	function insertSearches(results) {
+
+		var table = document.getElementById("searchTable");
+
+		for (search in results) {
+			for (i = 0; i < 5; i++) {
+				var row = table.insertRow(1);
+				var cell1 = row.insertCell(0);
+
+				cell1.innerHTML = "<p>"+results[search][i].Category+"</p>"+
+								  "<p>"+results[search][i].User_input+"</p>";
+			};
+		};
+	}
+
+	function deleteItem(evt) {
+
+		var data = $(this).data();
+
+		$.post("/delete-alert", 
+			{alert_id: data.id}, 
+
+			function (result) {
+				return "ok"
+		});
+	}
+
+	$("#delItem").on("click", deleteItem);
 </script>
 
 {% endblock %}

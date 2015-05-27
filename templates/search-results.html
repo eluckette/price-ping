@@ -2,25 +2,34 @@
 {% block content %}
 
 <div class="container">
-	<h3>Results for X?!</h3>
 
-	<form action='/search-amazon' class='form-inline'>
-	<label>Search:
-		<select name='category' class='form-control'>
-			<option value='Apparel'>Apparel</option>
-			<option value='Beauty'>Beauty</option>
-			<option value='Books'>Books</option>
-			<option value='Electronics'>Electronics</option>
-			<option value='Shoes'>Shoes</option>
-			<option value='Tools'>Tools</option>
-			<option value='Toys'>Toys</option>
-		</select>
-		<input type='search' name='user_input'>
-	</label>
-	<input type='submit' class='btn btn-default'>
-	</form>
-	
-	<p>Showing results x?! to x?!</p>
+	<div class="row">
+		<div class="col-lg-4">
+			<div class="input-group">
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Category <span class="caret"></span></button>
+					<ul class="dropdown-menu" role="menu">
+					<li><a href="#">Apparel</a></li>
+					<li><a href="#">Beauty</a></li>
+					<li><a href="#">Books</a></li>
+					<li><a href="#">Electronics</a></li>
+					<li><a href="#">Tools</a></li>
+					<li><a href="#">Toys</a></li>
+					</ul>
+				</div>
+
+				<input type="text" class="form-control" id="userSearch">
+				
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default submitSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<br>
+
+	<p><span id="itemNumOne"></span> - <span id="itemNumTwo"></span> of 100 results for "{{ user_input }}"</p>
 	<table class="table" id="searchTable">
 		<tr>
 		</tr>
@@ -44,7 +53,7 @@
 	      
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title" id="myModalLabel">Set Price Notification</h4>
+	        <h4 class="modal-title" id="myModalLabel">Set Price Alert</h4>
 	      </div>
 
 	      <div class="modal-body">
@@ -63,6 +72,8 @@
 <script>
 	$(document).ready(function() {
 		getResults(1);
+		$("#itemNumOne").html("1");
+		$("#itemNumTwo").html("20");
 	});
 
 	function refresh(evt) {
@@ -74,10 +85,12 @@
 			insertResults(results);
 		});
 		$('html,body').scrollTop(0)
+
+		$("#itemNumOne").html(page_number*20 - 19);
+		$("#itemNumTwo").html(page_number*20);
 	}
 
 	function insertResults(results) {
-		// $('#search_element').empty();
 		for(var i=document.getElementById("searchTable").rows.length; i>1; i--) {
 			document.getElementById("searchTable").deleteRow(i-1);
 		}
@@ -86,36 +99,32 @@
 
 		for (item in results) {
 			for (i = 0; i < 20; i=i+4) {
-				// $("#search_element").append("<img src="+results[item][i].Image_URL+">"+
-				// 							"<p>"+results[item][i].Title+"</p>"+
-				// 							"<p>"+results[item][i].Price_f+"</p>"+
-				// 							"<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i].ASIN +"' data-title='" +results[item][i].Title +"' data-image='" +results[item][i].Image_URL +"'data-price='" +results[item][i].Price +"' data-price_f='" +results[item][i].Price_f +"'>Set Notification</button>"+"<br>")
 
 				var row = table.insertRow(1);
-				var cell1 = row.insertCell(0);
-				var cell2 = row.insertCell(1);
-				var cell3 = row.insertCell(2);
-				var cell4 = row.insertCell(3);
+				var cell0 = row.insertCell(0);
+				var cell1 = row.insertCell(1);
+				var cell2 = row.insertCell(2);
+				var cell3 = row.insertCell(3);
 
-				cell1.innerHTML = "<img src="+results[item][i].Image_URL+">"+"<br>"+
-								  "<a href='#' class='triggerModal' data-target='#setNotification' data-asin='" +results[item][i].ASIN +"' data-title='" +results[item][i].Title +"' data-image='" +results[item][i].Image_URL +"'data-price='" +results[item][i].Price +"' data-price_f='" +results[item][i].Price_f +"'>"+results[item][i].Title+"</a>"+"<br>"+
-								  "<p>"+results[item][i].Price_f+"</p>";
+
+				var cells  = [0, 1, 2, 3];
+
+				cell0.innerHTML = "<div class='searchItem'><img src="+results[item][i+0].Image_URL+">"+"<br>"+
+								  "<a href='#' class='triggerModal' data-target='#setNotification' data-asin='" +results[item][i+0].ASIN +"' data-title='" +results[item][i+0].Title +"' data-image='" +results[item][i+0].Image_URL +"'data-price='" +results[item][i+0].Price +"' data-price_f='" +results[item][i+0].Price_f +"'>"+results[item][i+0].Title+"</a>"+"<br>"+
+								  "<p>"+results[item][i+0].Price_f+"</p></div>";
 
 				
-				cell2.innerHTML = "<img src="+results[item][i+1].Image_URL+">"+
-								  "<p>"+results[item][i+1].Title+"</p>"+
-								  "<p>"+results[item][i+1].Price_f+"</p>"+
-								  "<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i+1].ASIN +"' data-title='" +results[item][i+1].Title +"' data-image='" +results[item][i+1].Image_URL +"'data-price='" +results[item][i+1].Price +"' data-price_f='" +results[item][i+1].Price_f +"'>Set Notification</button>"+"<br>";
+				cell1.innerHTML = "<div class='searchItem'><img src="+results[item][i+1].Image_URL+">"+"<br>"+
+								  "<a href='#' class='triggerModal' data-target='#setNotification' data-asin='" +results[item][i+1].ASIN +"' data-title='" +results[item][i+1].Title +"' data-image='" +results[item][i+1].Image_URL +"'data-price='" +results[item][i+1].Price +"' data-price_f='" +results[item][i+1].Price_f +"'>"+results[item][i+1].Title+"</a>"+"<br>"+
+								  "<p>"+results[item][i+1].Price_f+"</p></div>";
 				
-				cell3.innerHTML = "<img src="+results[item][i+2].Image_URL+">"+
-								  "<p>"+results[item][i+2].Title+"</p>"+
-								  "<p>"+results[item][i+2].Price_f+"</p>"+
-								  "<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i+2].ASIN +"' data-title='" +results[item][i+2].Title +"' data-image='" +results[item][i+2].Image_URL +"'data-price='" +results[item][i+2].Price +"' data-price_f='" +results[item][i+2].Price_f +"'>Set Notification</button>"+"<br>";
+				cell2.innerHTML = "<div class='searchItem'><img src="+results[item][i+2].Image_URL+">"+"<br>"+
+								  "<a href='#' class='triggerModal' data-target='#setNotification' data-asin='" +results[item][i+2].ASIN +"' data-title='" +results[item][i+2].Title +"' data-image='" +results[item][i+2].Image_URL +"'data-price='" +results[item][i+2].Price +"' data-price_f='" +results[item][i+2].Price_f +"'>"+results[item][i+2].Title+"</a>"+"<br>"+
+								  "<p>"+results[item][i+2].Price_f+"</p></div>";
 				
-				cell4.innerHTML = "<img src="+results[item][i+3].Image_URL+">"+
-								  "<p>"+results[item][i+3].Title+"</p>"+
-								  "<p>"+results[item][i+3].Price_f+"</p>"+
-								  "<button type='button' class='triggerModal btn btn-primary' data-target='#setNotification' data-asin='" +results[item][i+3].ASIN +"' data-title='" +results[item][i+3].Title +"' data-image='" +results[item][i+3].Image_URL +"'data-price='" +results[item][i+3].Price +"' data-price_f='" +results[item][i+3].Price_f +"'>Set Notification</button>"+"<br>";
+				cell3.innerHTML = "<div class='searchItem'><img src="+results[item][i+3].Image_URL+">"+"<br>"+
+								  "<a href='#' class='triggerModal' data-target='#setNotification' data-asin='" +results[item][i+3].ASIN +"' data-title='" +results[item][i+3].Title +"' data-image='" +results[item][i+3].Image_URL +"'data-price='" +results[item][i+3].Price +"' data-price_f='" +results[item][i+3].Price_f +"'>"+results[item][i+3].Title+"</a>"+"<br>"+
+								  "<p>"+results[item][i+3].Price_f+"</p></div>";
 			};
 		};
 		$('.triggerModal').on('click', setModal);	
@@ -129,7 +138,7 @@
 		$('.modal-body').html("<img src="+data.image+"> <br>"+ 
 							  data.title+ "<br>" +
 							  data.price_f+ 
-							  "<form> <label for='alert-price-field'>Set Price:</label> <input type='number' min='0' max='100' name='alert-price' id='alert-price-field'> <label for'alert-length-field'>Length of Notification (Days):</label> <input type='number' min='1' max='5' name='alert-length' id='alert-length-field'> </form><button type='button' class='submit-item btn btn-default' data-title='"+data.title+"' data-price='"+data.price+"' data-asin='"+data.asin+"'>Submit</button>");
+							  "<form> <label for='alert-price-field'>Enter maximum price:</label> <input type='number' min='0' max='100' name='alert-price' id='alert-price-field'><br><br><label for'alert-length-field'>Length of Notification (Days):</label> <input type='number' min='1' max='5' name='alert-length' id='alert-length-field'> </form><button type='button' class='submit-item btn btn-default' data-title='"+data.title+"' data-price='"+data.price+"' data-asin='"+data.asin+"'>Submit</button>"+"<br><br><p>*You can manage alerts in My Account");
 		
 		$('#setNotification').modal('show');
 		$('.submit-item').on("click", saveItemAndAlert);
@@ -152,8 +161,35 @@
 				$('#setNotification').modal('hide');
 		});
 	}	
-
 	$('.pagination').on('click', refresh);
+
+		$(".dropdown-menu li a").click(function(){
+		  $(this).parents(".input-group-btn").find('.btn').text($(this).text());
+		  $(this).parents(".input-group-btn").find('.btn').val($(this).text());
+	});
+
+	function sendSearch(evt) {
+		var category = $('.dropdown-menu').parents(".input-group-btn").find('.btn').val();
+		var userSearch = $("#userSearch").val();
+
+		var form = document.createElement("form");
+		var inputCategory = document.createElement('input');
+		var inputSearch = document.createElement('input');
+
+		$(form).attr("action", "/search-results");
+
+		$(inputCategory).attr("value", category);
+		$(inputCategory).attr("name", "category");
+
+		$(inputSearch).attr("value", userSearch);
+		$(inputSearch).attr("name", "user_input");
+
+		form.appendChild(inputCategory);
+		form.appendChild(inputSearch);
+
+		form.submit();
+	}
+	$(".submitSearch").on("click", sendSearch);
 </script>
 
 {% endblock %}

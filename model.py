@@ -30,6 +30,7 @@ class Alert(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.product_id'))
     alert_price = db.Column(db.Float(10), nullable=False)
     expiration_date = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.Boolean, nullable=False)
 
     user = db.relationship('User',
                            backref=db.backref('alerts', order_by=alert_id))
@@ -58,9 +59,13 @@ class UserSearch(db.Model):
 
     __tablename__ = "userSearches"
     user_search_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     category = db.Column(db.String(20), nullable=False)
     user_input = db.Column(db.String(20), nullable=False)
     search_results = db.Column(db.Text)
+
+    user = db.relationship('User',
+                           backref=db.backref('userSearches', order_by=user_search_id))
 
 
 def connect_to_db(app):

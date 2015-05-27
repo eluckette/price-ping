@@ -68,22 +68,6 @@ def register_user():
         return redirect('/')
 
 
-@app.route('/get-account')
-def get_account():
-
-    user = User.query.filter_by(user_id=session['username']).one()
-    user_alerts = Alert.query.filter_by(user_id=session['username']).all()
-
-    json_obj = make_alert_json(user_alerts)
-
-    return jsonify(json_obj)
-
-@app.route('/user-account')
-def show_account():
-
-    return render_template('user-account.html')
-
-
 @app.route('/logout')
 def log_out():
 
@@ -91,11 +75,35 @@ def log_out():
     return render_template('index.html', session=session)
 
 
-@app.route('/search-amazon', methods=['GET'])
-def handle_search():
+@app.route('/user-account')
+def show_account():
 
-    category = request.args['category']
-    user_input = request.args['user_input']
+    return render_template('user-account.html')
+
+
+@app.route('/get-current-alerts')
+def get_current_alerts():
+
+    user = User.query.filter_by(user_id=session['username']).one()
+    user_alerts = Alert.query.filter_by(user_id=session['username']).all()
+    json_obj = make_alert_json(user_alerts)
+    return jsonify(json_obj)
+
+
+@app.route('/get-user-searches')
+def get_user_searches():
+
+    user = User.query.filter_by(user_id=session['username']).one()
+    user_searches = UserSearch.query.filter_by(user_id=session['username']).all()
+    json_obj = make_searches_json(user_searches)
+    return jsonify(json_obj)
+
+@app.route('/search-results', methods=['GET'])
+def show_results():
+
+
+    category = request.args.get('category')
+    user_input = request.args.get('user_input')
 
     search_results = api.item_search(category, Keywords=user_input,
                                      MerchantId='Amazon',
@@ -103,7 +111,9 @@ def handle_search():
 
     json_string = make_json(search_results)
 
-    user_search = UserSearch(category=category,
+    user = User.query.filter_by(user_id=1).one()
+    user_search = UserSearch(user_id=user.user_id,
+                             category=category,
                              user_input=user_input,
                              search_results=json_string)
     db.session.add(user_search)
@@ -111,13 +121,7 @@ def handle_search():
 
     session['search_id'] = user_search.user_search_id
 
-    return redirect('/search-results')
-
-
-@app.route('/search-results')
-def show_results():
-
-    return render_template('search-results.html', pages=5, session=session)
+    return render_template('search-results.html', pages=5, session=session, user_input=user_input)
 
 
 @app.route('/paginate-search/<int:page_number>', methods=['GET'])
@@ -164,23 +168,38 @@ def alert_data():
     db.session.commit()
 
     user = User.query.filter_by(user_id=1).one()
+
     product = Product.query.filter_by(asin=asin,
                                       date_entered=date_entered).one()
+    
     alert = Alert(user_id=user.user_id,
                   product_id=product.product_id,
                   alert_price=alert_price,
-                  expiration_date=expiration_date)
+                  expiration_date=expiration_date,
+                  status=1)
 
     db.session.add(alert)
     db.session.commit()
 
     return "ok"
 
-# used in @app.route('/search-amazon')
+@app.route('/delete-alert', methods=['POST'])
+def delete_item():
+
+    alert_id = int(request.form['alert_id'])
+    alert = Alert.query.filter_by(alert_id=alert_id).one()
+    
+    print alert.status
+    alert.status = 0
+    print alert.status
+    
+    return "ok"
+
+
+# used in @app.route('/search-results')
 def make_json(search_results):
 
     search_results_list = []
-
     for item in search_results:
         search_results_list.append({"ASIN": str(item.ASIN),
                                     "Title": str(item.ItemAttributes.Title),
@@ -188,27 +207,34 @@ def make_json(search_results):
                                     "Price_f": str(item.Offers.Offer.OfferListing.Price.FormattedPrice),
                                     "Price": str(item.Offers.Offer.OfferListing.Price.Amount),
                                     "Link": str(item.ItemLinks.ItemLink.URL)})
-
     search_results_dict = {}
     search_results_dict["items"] = search_results_list
     json_string = json.dumps(search_results_dict)
-
     return json_string
 
 
 def make_alert_json(alerts):
 
     current_alerts = []
-
     for alert in alerts:
-        current_alerts.append({"Title": alert.product.title,
+        current_alerts.append({"Alert_id": alert.alert_id,
+                               "Title": alert.product.title,
                                "Alert_price": alert.alert_price,
                                "Expiration_date": str(alert.expiration_date)})
     current_alerts_obj = {}
     current_alerts_obj["alerts"] = current_alerts
-
     json_obj = current_alerts_obj
+    return json_obj
 
+def make_searches_json(searches):
+    
+    user_searches = []
+    for search in searches:
+        user_searches.append({"Category": search.category,
+                              "User_input": search.user_input})
+    user_searches_obj = {}
+    user_searches_obj["searches"] = user_searches
+    json_obj = user_searches_obj
     return json_obj
 
 
