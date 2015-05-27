@@ -47,15 +47,12 @@
 	}
 
 	function insertAlerts(results) {	
-
 	    var table = document.getElementById("alertTable");
-
 		for (alert in results) {
 			for (i = 0; i < results[alert].length; i++) {
 				var row = table.insertRow(1);
 				var cell1 = row.insertCell(0);
-				var cell2 = row.insertCell(1);
-				
+				var cell2 = row.insertCell(1);	
 				cell1.innerHTML = "<button class='btn btn-default delItem' data-alert_id='"+results[alert][i].Alert_id+"'>Delete</button>";
 				cell2.innerHTML = "<p>"+results[alert][i].Title+"</p>"+
 								  "<p>"+results[alert][i].Alert_price+"</p>"+
@@ -65,14 +62,11 @@
 	}
 
 	function insertSearches(results) {
-
 		var table = document.getElementById("searchTable");
-
 		for (search in results) {
 			for (i = 0; i < 5; i++) {
 				var row = table.insertRow(1);
 				var cell1 = row.insertCell(0);
-
 				cell1.innerHTML = "<p>"+results[search][i].Category+"</p>"+
 								  "<p>"+results[search][i].User_input+"</p>";
 			};
@@ -80,9 +74,8 @@
 	}
 
 	function deleteItem(evt) {
-
 		var data = $(this).data();
-
+		
 		$.post("/delete-alert", 
 			{alert_id: data.id}, 
 
