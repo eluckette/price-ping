@@ -16,10 +16,15 @@ class Product(db.Model):
 
     __tablename__ = "products"
     product_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     title = db.Column(db.String(100), nullable=False)
     asin = db.Column(db.String(10), nullable=False)
     price = db.Column(db.Integer, nullable=False)
+    image_url = db.Column(db.Text)
     date_entered = db.Column(db.DateTime, nullable=True)
+
+    user = db.relationship('User',
+                            backref=db.backref('products', order_by=product_id))
 
 
 class Alert(db.Model):
@@ -28,8 +33,8 @@ class Alert(db.Model):
     alert_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     product_id = db.Column(db.Integer, db.ForeignKey('products.product_id'))
-    alert_price = db.Column(db.Float(10), nullable=False)
-    expiration_date = db.Column(db.DateTime, nullable=False)
+    alert_price = db.Column(db.Float(10))
+    expiration_date = db.Column(db.DateTime)
     status = db.Column(db.Boolean, nullable=False)
 
     user = db.relationship('User',

@@ -85,7 +85,7 @@ def show_account():
 def get_current_alerts():
 
     user = User.query.filter_by(user_id=session['username']).one()
-    user_alerts = Alert.query.filter_by(user_id=session['username']).all()
+    user_alerts = Alert.query.filter_by(user_id=session['username'], status=1).all()
     json_obj = make_alert_json(user_alerts)
     return jsonify(json_obj)
 
@@ -94,13 +94,13 @@ def get_current_alerts():
 def get_user_searches():
 
     user = User.query.filter_by(user_id=session['username']).one()
-    user_searches = UserSearch.query.filter_by(user_id=session['username']).all()
-    json_obj = make_searches_json(user_searches)
+    user_searches = Alert.query.filter_by(user_id=session['username'], status=0).all()
+    json_obj = make_alert_json(user_searches)
     return jsonify(json_obj)
+
 
 @app.route('/search-results', methods=['GET'])
 def show_results():
-
 
     category = request.args.get('category')
     user_input = request.args.get('user_input')
@@ -111,7 +111,7 @@ def show_results():
 
     json_string = make_json(search_results)
 
-    user = User.query.filter_by(user_id=1).one()
+    user = User.query.filter_by(user_id=session['username']).one()
     user_search = UserSearch(user_id=user.user_id,
                              category=category,
                              user_input=user_input,
@@ -147,41 +147,70 @@ def show_page(page_number):
     return jsonify(search)
 
 
-@app.route('/alert-data', methods=['POST'])
-def alert_data():
+@app.route('/set-alert', methods=['POST'])
+def set_alert():
 
     asin = request.form['asin']
     title = request.form['title']
     price = request.form['price']
+    image_url = request.form['image_url']
+    alert_price = 0
+    alert_length = datetime.utcnow()
+    date_entered = datetime.utcnow()
 
-    alert_price = int(request.form['alert_price'])
+    looking_for = Product.query.filter_by(asin=asin, user_id=session['username']).first()
+
+    if looking_for == None:
+        item = Product(user_id=session['username'],
+                       asin=asin,
+                       title=title,
+                       price=price,
+                       image_url=image_url,
+                       date_entered=date_entered)
+
+        db.session.add(item)
+        db.session.commit() 
+
+    user = User.query.filter_by(user_id=session['username']).one()
+    product = Product.query.filter_by(asin=asin, user_id=session['username']).first()
+
+    alert = Alert(user_id=user.user_id, 
+                  product_id=product.product_id,
+                  status=0)
+
+    db.session.add(alert)
+    db.session.commit()
+    return "ok"
+
+
+@app.route('/update-alert', methods=['POST'])
+def update_alert():
+
+    asin = request.form['asin']
+    title = request.form['title']
+    alert_price = float(request.form['alert_price'])
     alert_length = int(request.form['alert_length'])
 
     date_entered = datetime.utcnow()
     expiration_date = date_entered.replace(day=date_entered.day+alert_length)
 
-    item = Product(asin=asin,
-                   title=title,
-                   price=price,
-                   date_entered=date_entered)
-    db.session.add(item)
-    db.session.commit()
-
-    user = User.query.filter_by(user_id=1).one()
-
+    user = User.query.filter_by(user_id=session['username']).one()
     product = Product.query.filter_by(asin=asin,
-                                      date_entered=date_entered).one()
+                                      title=title).one()
     
-    alert = Alert(user_id=user.user_id,
-                  product_id=product.product_id,
-                  alert_price=alert_price,
-                  expiration_date=expiration_date,
-                  status=1)
+    alert = Alert.query.filter_by(user_id=user.user_id,
+                                  product_id=product.product_id,
+                                  status=0).first()
+
+    alert.alert_price = alert_price
+    alert.expiration_date = expiration_date
+    alert.status = 1
 
     db.session.add(alert)
     db.session.commit()
 
     return "ok"
+
 
 @app.route('/delete-alert', methods=['POST'])
 def delete_item():
@@ -192,11 +221,10 @@ def delete_item():
     print alert.status
     alert.status = 0
     print alert.status
-    
+
     return "ok"
 
 
-# used in @app.route('/search-results')
 def make_json(search_results):
 
     search_results_list = []
@@ -217,24 +245,20 @@ def make_alert_json(alerts):
 
     current_alerts = []
     for alert in alerts:
+
+        if alert.expiration_date == None:
+            expiration_date = "";
+        else:
+            expiration_date = str(alert.expiration_date.month)+"/"+str(alert.expiration_date.day)+"/"+str(alert.expiration_date.year)
+
         current_alerts.append({"Alert_id": alert.alert_id,
                                "Title": alert.product.title,
                                "Alert_price": alert.alert_price,
-                               "Expiration_date": str(alert.expiration_date)})
+                               "Expiration_date": expiration_date,
+                               "Image_URL": alert.product.image_url})
     current_alerts_obj = {}
     current_alerts_obj["alerts"] = current_alerts
     json_obj = current_alerts_obj
-    return json_obj
-
-def make_searches_json(searches):
-    
-    user_searches = []
-    for search in searches:
-        user_searches.append({"Category": search.category,
-                              "User_input": search.user_input})
-    user_searches_obj = {}
-    user_searches_obj["searches"] = user_searches
-    json_obj = user_searches_obj
     return json_obj
 
 
