@@ -32,11 +32,21 @@ AUTH_TOKEN = os.environ['TWILIO_AUTH_TOKEN']
  
 client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN) 
 
+def manipulated_product_check():
+
+	active_alerts = session.query(Alert).filter_by(status=1).all()
+	alert = active_alerts[:1]
+
+	print alert.product.price
+
+
+	
+	return 'ok'
+
+
 def check_prices():
 
-	date_now = datetime.utcnow()
-	active_alerts = session.query(Alert).filter(date_now < Alert.expiration_date).all()
-
+	active_alerts = session.query(Alert).filter_by(status=1).all()
 
 	for alert in active_alerts:
 		current_search = api.item_lookup(alert.product.asin, MerchantId='Amazon', ResponseGroup='Offers, Images, ItemAttributes')
@@ -51,16 +61,20 @@ def check_prices():
 		price_report = PriceReport(alert_id=alert.alert_id, asin=str(alert.product.asin),
 								   price=int(current_search.Items.Item.Offers.Offer.OfferListing.Price.Amount), 
 								   date_checked=datetime.utcnow())
-
+		print "added price_report"
 		session.add(price_report)
 		session.commit()
 
+	return active_alerts
+
 def send_text(title, origninal_price, new_price):
+
+		text_body = "Price has lowered for" + title 
 
 		client.messages.create(
 		to="3153825951", 
 		from_="+14159643618", 
-		body="Price Alert!", title, "has just lowered in price"  
+		body=text_body,
 		)
 
 
@@ -70,4 +84,5 @@ def do_every(interval, function, iterations):
 		function()
 
 if __name__ == '__main__':
-	do_every(120, check_prices, 2)
+	# do_every(120, check_prices, 2)
+	manipulated_product_check()

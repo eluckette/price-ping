@@ -7,6 +7,9 @@ from flask import Flask, render_template, redirect, request, flash, session, jso
 from flask_debugtoolbar import DebugToolbarExtension
 from model import User, Product, Alert, UserSearch, connect_to_db, db
 from datetime import datetime
+import random
+import codecs
+
 
 app = Flask(__name__)
 app.secret_key = "ABC"
@@ -74,6 +77,13 @@ def log_out():
     session.pop('username')
     return render_template('index.html', session=session)
 
+@app.route('/get-other-alerts')
+def get_popular_alerts():
+
+    popular_alerts = Alert.query.filter_by(status=1).all()
+    json_obj = make_alert_json(popular_alerts)
+    return jsonify(json_obj)
+
 
 @app.route('/user-account')
 def show_account():
@@ -85,7 +95,7 @@ def show_account():
 def get_current_alerts():
 
     user = User.query.filter_by(user_id=session['username']).one()
-    user_alerts = Alert.query.filter_by(user_id=session['username'], status=1).all()
+    user_alerts = Alert.query.filter_by(user_id=session['username']).filter_by(status=1).all()
     json_obj = make_alert_json(user_alerts)
     return jsonify(json_obj)
 
@@ -98,16 +108,28 @@ def get_user_searches():
     json_obj = make_alert_json(user_searches)
     return jsonify(json_obj)
 
+@app.route('/get-random-search')
+def get_random_search():
 
-@app.route('/search-results', methods=['GET'])
+    numSearches = UserSearch.query.count()
+    random_id = random.randint(0, numSearches)
+    random_search = UserSearch.query.filter_by(user_search_id=random_id).one()
+    return (random_search.category, random_search.user_input);
+
+@app.route('/search-results', methods=['GET', 'POST'])
 def show_results():
 
-    category = request.args.get('category')
-    user_input = request.args.get('user_input')
+    if request.method == 'GET':
+        category = request.args.get('category')
+        user_input = request.args.get('user_input')
+    else:
+        category = request.form['category']
+        user_input = request.form['user_input']
 
     search_results = api.item_search(category, Keywords=user_input,
                                      MerchantId='Amazon',
                                      ResponseGroup='Offers, ItemAttributes, Images')
+
 
     json_string = make_json(search_results)
 
@@ -216,11 +238,11 @@ def update_alert():
 def delete_item():
 
     alert_id = int(request.form['alert_id'])
-    alert = Alert.query.filter_by(alert_id=alert_id).one()
-    
-    print alert.status
+    alert = Alert.query.filter_by(alert_id=alert_id).one()    
     alert.status = 0
-    print alert.status
+
+    db.session.add(alert)
+    db.session.commit()
 
     return "ok"
 
@@ -229,12 +251,13 @@ def make_json(search_results):
 
     search_results_list = []
     for item in search_results:
-        search_results_list.append({"ASIN": str(item.ASIN),
-                                    "Title": str(item.ItemAttributes.Title),
-                                    "Image_URL": str(item.ImageSets.ImageSet.MediumImage.URL),
-                                    "Price_f": str(item.Offers.Offer.OfferListing.Price.FormattedPrice),
-                                    "Price": str(item.Offers.Offer.OfferListing.Price.Amount),
-                                    "Link": str(item.ItemLinks.ItemLink.URL)})
+        
+        search_results_list.append({"ASIN": unicode(item.ASIN),
+                                    "Title": unicode(item.ItemAttributes.Title),
+                                    "Image_URL": unicode(item.ImageSets.ImageSet.MediumImage.URL),
+                                    "Price_f": unicode(item.Offers.Offer.OfferListing.Price.FormattedPrice),
+                                    "Price": unicode(item.Offers.Offer.OfferListing.Price.Amount),
+                                    "Link": unicode(item.ItemLinks.ItemLink.URL)})
     search_results_dict = {}
     search_results_dict["items"] = search_results_list
     json_string = json.dumps(search_results_dict)
@@ -249,7 +272,7 @@ def make_alert_json(alerts):
         if alert.expiration_date == None:
             expiration_date = "";
         else:
-            expiration_date = str(alert.expiration_date.month)+"/"+str(alert.expiration_date.day)+"/"+str(alert.expiration_date.year)
+            expiration_date = unicode(alert.expiration_date.month)+"/"+unicode(alert.expiration_date.day)+"/"+unicode(alert.expiration_date.year)
 
         current_alerts.append({"Alert_id": alert.alert_id,
                                "Title": alert.product.title,

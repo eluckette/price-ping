@@ -87,7 +87,7 @@
 	function insertResults(results) {
 		for(var i=document.getElementById("searchTable").rows.length; i>1; i--) {
 			document.getElementById("searchTable").deleteRow(i-1);
-		}
+		};
 
 		var table = document.getElementById("searchTable");
 		for (item in results) {
