@@ -33,15 +33,30 @@ AUTH_TOKEN = os.environ['TWILIO_AUTH_TOKEN']
 client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN) 
 
 def manipulated_product_check():
+	"""manipulates price of alert to test text to user"""
 
 	active_alerts = session.query(Alert).filter_by(status=1).all()
-	alert = active_alerts[:1]
 
-	print alert.product.price
-
-
-	
-	return 'ok'
+	for a in active_alerts[:1]:
+		current_search = api.item_lookup(a.product.asin, MerchantId='Amazon', ResponseGroup='Offers, Images, ItemAttributes')
+		
+		if a.product.price <= current_search.Items.Item.Offers.Offer.OfferListing.Price.Amount:
+			a.product.price += 5
+		
+		if a.product.price  > current_search.Items.Item.Offers.Offer.OfferListing.Price.Amount:
+			title = a.product.title
+			origninal_price = a.product.price
+			new_price = current_search.Items.Item.Offers.Offer.OfferListing.Price.Amount
+			
+			send_text(title, origninal_price, new_price)
+		
+		price_report = PriceReport(alert_id=a.alert_id, asin=str(a.product.asin),
+							   price=int(current_search.Items.Item.Offers.Offer.OfferListing.Price.Amount), 
+							   date_checked=datetime.utcnow())
+		
+		print "added price_report"
+		session.add(price_report)
+		session.commit()
 
 
 def check_prices():
@@ -69,7 +84,7 @@ def check_prices():
 
 def send_text(title, origninal_price, new_price):
 
-		text_body = "Price has lowered for" + title 
+		text_body = "Price has lowered for " + title 
 
 		client.messages.create(
 		to="3153825951", 

@@ -14,6 +14,11 @@ body { padding-bottom: 100px; }
 	vertical-align: bottom;
 }
 
+td {
+	vertical-align:bottom;
+	text-align:center;
+}
+
 #footer {
 	height:100px;
 	background-color: #2F3842;
@@ -27,3 +32,12 @@ body { padding-bottom: 100px; }
 #rSearch {
 	margin-top: 10px;
 }
+
+.loader {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url('http://bradsknutson.com/wp-content/uploads/2013/04/page-loader.gif') 50% 50% no-repeat rgb(249,249,249);

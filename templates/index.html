@@ -18,16 +18,13 @@
 						<li><a href="#">Toys</a></li>
 						</ul>
 					</div>
-
 					<input type="text" class="form-control" id="userSearch">
-
 					<div class="input-group-btn">
 						<button type="button" class="btn btn-default submitSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
 					</div>
 				</div>
 			</div>
 		</div>
-
 		<div class="row" id="rSearch">
 			<div class="col-md-4">
 				<a href="#" id="randomSearch">Random Search</a>
@@ -36,12 +33,16 @@
 	</div>
 </div>
 
+<div class="loader" style="display: none"></div>
+
 <div class="container">
 	<div class="row">
 		<h4>See what others are setting alerts for</h4>
 		<table class="table" id="otherAlerts">
-			<tr>
-			</tr>
+			<tbody>
+				<tr>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 </div>
@@ -54,7 +55,6 @@
 
 	function getRandomSearch() {
 		$.get("/get-random-search", function(results){
-			console.log(results);
 			return results;
 		});
 	}
@@ -66,38 +66,15 @@
 	}
 
 	function insertOtherAlerts(results) {
+
 		var table = document.getElementById("otherAlerts");
 		var row = table.insertRow(1);
-		var arrAlerts = [];
-
-		for (alert in results) {
-			for (var i = 0; i < results[alert].length; i++) {
-				arrAlerts.push({
-					title: results[alert][i].Title,
-					image_url: results[alert][i].Image_URL
-				});
-			};
-		};
 		
-		arrAlerts = randomizeArray(arrAlerts);
-		function randomizeArray(array) {
-			var i = array.length, j, temp;
-
-			while (--i >= 1) {
-				j = Math.floor(Math.random()*(i + 1));
-				temp = array[i];
-				array[i] = array[j];
-				array[j] = temp;
-			}
-			return array;
-		}
-
-		for (var i = 0; i < 6; i++) {
+		for (var i = 0; i < results['alerts'].length; i++) {
 			var homeCell = row.insertCell(0);
-			homeCell.innerHTML = "<img src='"+arrAlerts[i].image_url+"'</p>"+
-							     "<p>"+arrAlerts[i].title+"</p>";
-		}
-
+			homeCell.innerHTML = "<img src="+results['alerts'][i].Image_URL+">"+
+								 "<p>"+results['alerts'][i].Title+"</p>";
+		};
 
 	}
 
@@ -107,6 +84,7 @@
 	});
 
 	function sendSearch(evt) {
+
 		var category = $(".dropdown-menu").parents(".input-group-btn").find(".btn").val();
 		var userSearch = $("#userSearch").val();
 
@@ -126,7 +104,9 @@
 		form.appendChild(inputSearch);
 
 		form.submit();
+		$(".loader").fadeIn("slow");
 	}
+	
 	$(".submitSearch").on("click", sendSearch);
 </script>
 {% endblock %}

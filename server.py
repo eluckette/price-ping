@@ -1,6 +1,5 @@
 import os
 import amazonproduct
-
 import json
 from jinja2 import StrictUndefined
 from flask import Flask, render_template, redirect, request, flash, session, jsonify
@@ -9,7 +8,6 @@ from model import User, Product, Alert, UserSearch, connect_to_db, db
 from datetime import datetime
 import random
 import codecs
-
 
 app = Flask(__name__)
 app.secret_key = "ABC"
@@ -28,6 +26,7 @@ api = amazonproduct.API(cfg=amazon_api_config)
 @app.route('/')
 def index():
 
+    session['username'] = 1
     return render_template('index.html', session=session)
 
 
@@ -37,13 +36,13 @@ def login_user():
     user = User.query.filter_by(email=request.form['email']).first()
 
     if not user:
-        flash('Invalid login')
+        flash('Invalid e-mail')
         return render_template('index.html')
     else:
         if user and (user.password == request.form['password']):
             session['username'] = user.user_id
             flash('Login successful')
-            return redirect('/')
+            return render_template('index.html')
         else:
             flash('Invalid password')
             return render_template('index.html')
@@ -52,36 +51,41 @@ def login_user():
 @app.route('/register', methods=['POST'])
 def register_user():
 
-    if request.form['password'] != request.form['passwordConfirm']:
+    if request.form['password'] != request.form['password_check']:
         flash('Passwords do not match')
-        return redirect('/')
+        return render_template('index.html')
+    
+    if User.query.filter_by(email=request.form['email']).first():
+        flash('User already exists, please sign-in or register with a new e-mail')
+        return render_template('index.html')
+    
     else:
         email = request.form['email']
         password = request.form['password']
-        phone = request.form['phone']
+        phone = request.form['phone_number']
 
         user = User(email=email, password=password, phone_number=phone)
         db.session.add(user)
         db.session.commit()
 
         session['username'] = user.user_id
-
         flash('Registration successful')
 
-        return redirect('/')
+        return render_template('index.html')
 
 
 @app.route('/logout')
 def log_out():
 
-    session.pop('username')
+    session['username'] = 1
     return render_template('index.html', session=session)
 
 @app.route('/get-other-alerts')
 def get_popular_alerts():
 
-    popular_alerts = Alert.query.filter_by(status=1).all()
-    json_obj = make_alert_json(popular_alerts)
+    list_search_id = [random.randint(0, UserSearch.query.count()) for x in range(5)]
+    other_searches = [Alert.query.filter_by(alert_id=x).first() for x in list_search_id]
+    json_obj = make_alert_json(other_searches)
     return jsonify(json_obj)
 
 
@@ -94,7 +98,6 @@ def show_account():
 @app.route('/get-current-alerts')
 def get_current_alerts():
 
-    user = User.query.filter_by(user_id=session['username']).one()
     user_alerts = Alert.query.filter_by(user_id=session['username']).filter_by(status=1).all()
     json_obj = make_alert_json(user_alerts)
     return jsonify(json_obj)
@@ -103,7 +106,6 @@ def get_current_alerts():
 @app.route('/get-user-searches')
 def get_user_searches():
 
-    user = User.query.filter_by(user_id=session['username']).one()
     user_searches = Alert.query.filter_by(user_id=session['username'], status=0).all()
     json_obj = make_alert_json(user_searches)
     return jsonify(json_obj)
@@ -111,13 +113,18 @@ def get_user_searches():
 @app.route('/get-random-search')
 def get_random_search():
 
-    numSearches = UserSearch.query.count()
-    random_id = random.randint(0, numSearches)
+    random_id = random.randint(0, UserSearch.quert.count())
     random_search = UserSearch.query.filter_by(user_search_id=random_id).one()
     return (random_search.category, random_search.user_input);
 
 @app.route('/search-results', methods=['GET', 'POST'])
 def show_results():
+
+    if session['username'] == 1:
+        user = User.query.filter_by(user_id=1).one()
+
+    else: 
+        user = UserSearch.query.filter_by(user_id=session['username'].one())
 
     if request.method == 'GET':
         category = request.args.get('category')
@@ -133,7 +140,7 @@ def show_results():
 
     json_string = make_json(search_results)
 
-    user = User.query.filter_by(user_id=session['username']).one()
+    # user = User.query.filter_by(user_id=session['username']).one()
     user_search = UserSearch(user_id=user.user_id,
                              category=category,
                              user_input=user_input,
@@ -149,8 +156,7 @@ def show_results():
 @app.route('/paginate-search/<int:page_number>', methods=['GET'])
 def show_page(page_number):
 
-    search_results = UserSearch.query.filter_by(
-        user_search_id=session['search_id']).first()
+    search_results = UserSearch.query.filter_by(user_search_id=session['search_id']).first()
     search = search_results.search_results
     search = json.loads(search)
 
@@ -202,7 +208,6 @@ def set_alert():
 
     db.session.add(alert)
     db.session.commit()
-    return "ok"
 
 
 @app.route('/update-alert', methods=['POST'])
@@ -231,8 +236,6 @@ def update_alert():
     db.session.add(alert)
     db.session.commit()
 
-    return "ok"
-
 
 @app.route('/delete-alert', methods=['POST'])
 def delete_item():
@@ -243,8 +246,6 @@ def delete_item():
 
     db.session.add(alert)
     db.session.commit()
-
-    return "ok"
 
 
 def make_json(search_results):

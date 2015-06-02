@@ -1,42 +1,51 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="container">
+<div class="jumbotron container-fluid">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="input-group">
+					<div class="input-group-btn">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Category <span class="caret"></span></button>
+						<ul class="dropdown-menu" role="menu">
+						<li><a href="#">All</a></li>
+						<li><a href="#">Apparel</a></li>
+						<li><a href="#">Beauty</a></li>
+						<li><a href="#">Books</a></li>
+						<li><a href="#">Electronics</a></li>
+						<li><a href="#">Tools</a></li>
+						<li><a href="#">Toys</a></li>
+						</ul>
+					</div>
 
-	<div class="row">
-		<div class="col-lg-4">
-			<div class="input-group">
-				<div class="input-group-btn">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Category <span class="caret"></span></button>
-					<ul class="dropdown-menu" role="menu">
-					<li><a href="#">Apparel</a></li>
-					<li><a href="#">Beauty</a></li>
-					<li><a href="#">Books</a></li>
-					<li><a href="#">Electronics</a></li>
-					<li><a href="#">Tools</a></li>
-					<li><a href="#">Toys</a></li>
-					</ul>
+					<input type="text" class="form-control" id="userSearch">
+
+					<div class="input-group-btn">
+						<button type="button" class="btn btn-default submitSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+					</div>
 				</div>
-
-				<input type="text" class="form-control" id="userSearch">
-				
-				<div class="input-group-btn">
-					<button type="button" class="btn btn-default submitSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-				</div>
-
 			</div>
 		</div>
 	</div>
-	<br>
+</div>	
+	
+<br>
+<div class="loader" style="display: none"></div>
 
+
+<div class="container">
 	<p><span id="itemNumOne"></span> - <span id="itemNumTwo"></span> of 100 results for "{{ user_input }}"</p>
 	<table class="table" id="searchTable">
+		<col width="100">
+		<col width="100">
+		<col width="100">
+		<col width="100">
 		<tr>
 		</tr>
 	</table>
 
-	<div id="search_element">
-	</div>
+	<div id="search_element"></div>
 
 	<div id="pagination">
 		{% for page in range(pages) %}
@@ -47,8 +56,7 @@
 	<!-- Modal Shows When Button Clicked -->
 	<div class="modal fade" id="setNotification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="false">
 	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      
+	    <div class="modal-content"> 
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        <h4 class="modal-title" id="myModalLabel">Set Price Alert</h4>
@@ -61,11 +69,12 @@
 	    </div>
 	  </div>
 	</div>
-
 </div>
 
 <script>
+
 	$(document).ready(function() {
+		$(".loader").fadeOut("slow");
 		getResults(1);
 		$("#itemNumOne").html("1");
 		$("#itemNumTwo").html("20");
@@ -119,22 +128,21 @@
 	}
 
 	function setModal(evt) {
-
 		var data = $(this).data();
 		saveAlert(data.asin, data.title, data.price, data.price_f, data.image);
 
 		$('.modal-body').empty();
+
 		$('.modal-body').html("<img src="+data.image+"> <br>"+ 
 							  data.title+ "<br>" +
-							  data.price_f+ 
-							  "<form><label for='alert-price-field'>Enter maximum price:</label> <input type='number' min='0' max='100' name='alert-price' id='alert-price-field'><br><br><label for'alert-length-field'>Length of notification (days):</label> <input type='number' min='1' max='5' name='alert-length' id='alert-length-field'> </form><button type='button' class='submit-item btn btn-default' data-title='"+data.title+"' data-price='"+data.price+"' data-asin='"+data.asin+"'>Submit</button>"+"<br><br><p>*You can manage alerts in My Account");
+							  data.price_f+
+							  "<form><label for='alert-price-field'>Enter maximum price:</label> <input type='number' min='0' max='100' name='alert-price' id='alert-price-field'><br><br><label for'alert-length-field'>Length of notification (days):</label> <input type='number' min='1' max='5' name='alert-length' id='alert-length-field'> </form> <button type='button' class='submit-item btn btn-default' data-title='"+data.title+"' data-price='"+data.price+"' data-asin='"+data.asin+"'>Submit</button>"+"<br><br><p>*You can manage alerts in My Account");
 		
 		$('#setNotification').modal('show');
 		$('.submit-item').on("click", updateAlert);
 	}
 	
 	function saveAlert(asin, title, price, price_f, image_url) {
-
 		$.post("/set-alert",
 			{asin: asin,
 			 title: title,
@@ -147,7 +155,6 @@
 	} 
 
 	function updateAlert(evt) {
-		
 		var data = $(this).data();
 		var alert_length = parseFloat($('#alert-length-field').val());
 		var alert_price = parseFloat($('#alert-price-field').val());
@@ -202,7 +209,9 @@
 		form.appendChild(inputSearch);
 
 		form.submit();
+		$(".loader").fadeIn("slow");
 	}
+
 	$(".submitSearch").on("click", sendSearch);
 </script>
 

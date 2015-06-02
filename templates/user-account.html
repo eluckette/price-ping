@@ -6,15 +6,15 @@
 		<div id="user">
 		</div>
 	</div>
-
 	<div class="row">
-		<div class="col-md-6" id="alerts">
+		<div class="col-md-8" id="alerts">
 			<h3>Current Alerts</h3>
 			<table class="table table-hover" id="alertTable">
 				<thead>
 				<tr>
 					<th></th>
 					<th>Product</th>
+					<th>
 					<th>Alert Price</th>
 					<th>Expiration Date</th>
 				</tr>
@@ -25,12 +25,9 @@
 				</tbody>
 			</table>
 		</div>
-
 		<div class="col-md-1">
 		</div>
-
-
-		<div class="col-md-4" id="prevViewed">
+		<div class="col-md-2" id="prevViewed">
 			<h3>Recent Searches</h3>
 			<table class="table" id="userSearchesTable">
 				<tr>
@@ -38,7 +35,6 @@
 			</table>
 		</div>
 	</div>
-
 </div>
 
 <script>
@@ -60,26 +56,24 @@
 		});
 	}
 
-	function insertAlerts(results) {	
-		// var table = $('#alertTable tbody')
-		console.log(results)
+	function insertAlerts(results) {
 	    var table = document.getElementById("alertsBody");
-		// for (alert in results) {
-			// console.log(alert);
 		for (var i = 0; i < results['alerts'].length; i++) {
 			var row = table.insertRow(0);
 			var cell1 = row.insertCell(0);
 			var cell2 = row.insertCell(1);	
 			var cell3 = row.insertCell(2);
 			var cell4 = row.insertCell(3);
+			var cell5 = row.insertCell(4);
+
 			cell1.innerHTML = "<button class='btn btn-default delItem' data-alert_id='"+results['alerts'][i].Alert_id+"'>Delete</button>";
-			cell2.innerHTML = "<p>"+results['alerts'][i].Title+"</p>";
-			cell3.innerHTML = "<p>"+formatNumber(results['alerts'][i].Alert_price)+"</p>";
-			cell4.innerHTML = "<p>"+results['alerts'][i].Expiration_date+"</p>";	
+			cell2.innerHTML = "<img src="+results['alerts'][i].Image_URL+" width='60px'>";
+			cell3.innerHTML = "<p>"+results['alerts'][i].Title+"</p>";
+			cell4.innerHTML = "<p>"+formatNumber(results['alerts'][i].Alert_price)+"</p>";
+			cell5.innerHTML = "<p>"+results['alerts'][i].Expiration_date+"</p>";	
 
 			assignDeleteAlert();
 		};
-		// };
 	}
 
 	function assignDeleteAlert() {
@@ -105,16 +99,13 @@
 
 	function insertSearches(results) {
 		var table = document.getElementById("userSearchesTable");
-		// for (alert in results) {
-			for (var i = 0; i < results["alerts"].length/2; i++) {
-				var row = table.insertRow(1);
-				var cell1 = row.insertCell(0);
-				cell1.innerHTML = "<p><img src='"+results["alerts"][i].Image_URL+"'</p>"+
-								  "<p>"+results["alerts"][i].Title+"</p>";		
-			};
-		// };
+		for (var i = 0; i < results["alerts"].length/2; i++) {
+			var row = table.insertRow(1);
+			var cell1 = row.insertCell(0);
+			cell1.innerHTML = "<p><img src='"+results["alerts"][i].Image_URL+"'</p>"+
+							  "<p>"+results["alerts"][i].Title+"</p>";		
+		};
 	}
-
 </script>
 
 {% endblock %}
