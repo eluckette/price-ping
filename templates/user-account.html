@@ -28,7 +28,7 @@
 		<div class="col-md-1">
 		</div>
 		<div class="col-md-2" id="prevViewed">
-			<h3>Recent Searches</h3>
+			<h3>Your Recently Viewed Items</h3>
 			<table class="table" id="userSearchesTable">
 				<tr>
 				</tr>
@@ -40,7 +40,7 @@
 <script>
 	$(document).ready(function() {
 		getCurrentAlerts();
-		getUserSearches();
+		getRecentlyViewed();
 	});
 
 	function getCurrentAlerts() {
@@ -50,8 +50,8 @@
 		});
 	}
 
-	function getUserSearches() {
-		$.get("/get-user-searches", function(results){
+	function getRecentlyViewed() {
+		$.get("/get-recently-viewed", function(results){
 			insertSearches(results);
 		});
 	}
@@ -77,16 +77,19 @@
 	}
 
 	function assignDeleteAlert() {
-		$(".delItem").on("click", function() {
-			
-			var data = $(this).data();
-			$.post("/delete-alert",
-				{alert_id: data.alert_id},
+		$(".delItem").on("click", delAlert)
+	}
 
-				function(result) {
-					refreshAlerts();
-				});
-		});	
+	function delAlert(evt) {
+		
+		var data = $(this).data();
+		
+		$.post("/delete-alert",
+			{alert_id: data.alert_id},
+
+			function(result) {
+				refreshAlerts();
+		});
 	}	
 
 	function refreshAlerts() {
@@ -99,7 +102,7 @@
 
 	function insertSearches(results) {
 		var table = document.getElementById("userSearchesTable");
-		for (var i = 0; i < results["alerts"].length/2; i++) {
+		for (var i = results["alerts"].length; i--;) {
 			var row = table.insertRow(1);
 			var cell1 = row.insertCell(0);
 			cell1.innerHTML = "<p><img src='"+results["alerts"][i].Image_URL+"'</p>"+

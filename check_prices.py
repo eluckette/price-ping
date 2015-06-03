@@ -35,7 +35,7 @@ client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 def manipulated_product_check():
 	"""manipulates price of alert to test text to user"""
 
-	active_alerts = session.query(Alert).filter_by(status=1).all()
+	active_alerts = session.query(Alert).filter_by(active=1).all()
 
 	for a in active_alerts[:1]:
 		current_search = api.item_lookup(a.product.asin, MerchantId='Amazon', ResponseGroup='Offers, Images, ItemAttributes')
@@ -61,7 +61,7 @@ def manipulated_product_check():
 
 def check_prices():
 
-	active_alerts = session.query(Alert).filter_by(status=1).all()
+	active_alerts = session.query(Alert).filter_by(active=1).all()
 
 	for alert in active_alerts:
 		current_search = api.item_lookup(alert.product.asin, MerchantId='Amazon', ResponseGroup='Offers, Images, ItemAttributes')

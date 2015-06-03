@@ -35,7 +35,8 @@ class Alert(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.product_id'))
     alert_price = db.Column(db.Float(10))
     expiration_date = db.Column(db.DateTime)
-    status = db.Column(db.Boolean, nullable=False)
+    alert_set = db.Column(db.Boolean, nullable=False)
+    active = db.Column(db.Boolean, nullable=False)
 
     user = db.relationship('User',
                            backref=db.backref('alerts', order_by=alert_id))
