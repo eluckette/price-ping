@@ -77,7 +77,7 @@ class UserSearch(db.Model):
 def connect_to_db(app):
     """Connect the database to our Flask app."""
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hbproj.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///priceping.db'
     db.app = app
     db.init_app(app)
 

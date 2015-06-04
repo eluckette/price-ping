@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
+<script src="/static/js/script.js"></script>
+
 
 <div class="jumbotron container-fluid">
 	<div class="container">
@@ -45,68 +47,24 @@
 			</tbody>
 		</table>
 	</div>
+
+	<!-- Modal Shows When Button Clicked -->
+	<div class="modal fade" id="setNotification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="false">
+	  <div class="modal-dialog">
+	    <div class="modal-content"> 
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">Set Price Alert</h4>
+	      </div>
+	      <div class="modal-body">
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
 </div>
 
-<script>
-	$(document).ready(function() {
-		getOtherAlerts()
-		$("#randomSearch").on("click", getRandomSearch);
-	});
-
-	function getRandomSearch() {
-		$.get("/get-random-search", function(results){
-			return results;
-		});
-	}
-
-	function getOtherAlerts() {
-		$.get("/get-other-alerts", function(results){
-			insertOtherAlerts(results);
-		});
-	}
-
-	function insertOtherAlerts(results) {
-
-		var table = document.getElementById("otherAlerts");
-		var row = table.insertRow(1);
-		
-		for (var i = 0; i < results['alerts'].length; i++) {
-			var homeCell = row.insertCell(0);
-			homeCell.innerHTML = "<img src="+results['alerts'][i].Image_URL+">"+
-								 "<p>"+results['alerts'][i].Title+"</p>";
-		};
-
-	}
-
-	$(".dropdown-menu li a").click(function(){
-		  $(this).parents(".input-group-btn").find('.btn').text($(this).text());
-		  $(this).parents(".input-group-btn").find('.btn').val($(this).text());
-	});
-
-	function sendSearch(evt) {
-
-		var category = $(".dropdown-menu").parents(".input-group-btn").find(".btn").val();
-		var userSearch = $("#userSearch").val();
-
-		var form = document.createElement("form");
-		var inputCategory = document.createElement("input");
-		var inputSearch = document.createElement("input");
-
-		$(form).attr("action", "/search-results");
-
-		$(inputCategory).attr("value", category);
-		$(inputCategory).attr("name", "category");
-
-		$(inputSearch).attr("value", userSearch);
-		$(inputSearch).attr("name", "user_input");
-
-		form.appendChild(inputCategory);
-		form.appendChild(inputSearch);
-
-		form.submit();
-		$(".loader").fadeIn("slow");
-	}
-	
-	$(".submitSearch").on("click", sendSearch);
-</script>
 {% endblock %}

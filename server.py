@@ -83,11 +83,10 @@ def log_out():
 @app.route('/get-other-alerts')
 def get_popular_alerts():
 
-    list_search_id = [random.randint(0, Alert.query.count())
-                      for x in range(5)]
-    other_searches = [Alert.query.filter_by(alert_id=x).first()
+    list_search_id = random.sample(range(1, Alert.query.count()), 5)
+    other_searches = [Alert.query.filter_by(alert_id=x).one()
                       for x in list_search_id]
-    json_obj = make_alert_json(other_searches)
+    json_obj = make_alert_home_json(other_searches)
     return jsonify(json_obj)
 
 
@@ -277,16 +276,35 @@ def make_json(search_results):
     json_string = json.dumps(search_results_dict)
     return json_string
 
+def make_alert_home_json(alerts):
+
+    current_alerts = []
+    for alert in alerts:
+
+        if alert.expiration_date:
+            expiration_date = unicode(alert.expiration_date.month)+"/"+unicode(alert.expiration_date.day)+"/"+unicode(alert.expiration_date.year)
+        else:
+            expiration_date = " "
+
+        current_alerts.append({"Alert_id": alert.alert_id,
+                               "Title": alert.product.title,
+                               "Price": alert.product.price,
+                               "Expiration_date": expiration_date,
+                               "Image_URL": alert.product.image_url})
+    current_alerts_obj = {}
+    current_alerts_obj["alerts"] = current_alerts
+    json_obj = current_alerts_obj
+    return json_obj
 
 def make_alert_json(alerts):
 
     current_alerts = []
     for alert in alerts:
 
-        if not alert.expiration_date:
-            expiration_date = ""
-        else:
+        if alert.expiration_date:
             expiration_date = unicode(alert.expiration_date.month)+"/"+unicode(alert.expiration_date.day)+"/"+unicode(alert.expiration_date.year)
+        else:
+            expiration_date = " "
 
         current_alerts.append({"Alert_id": alert.alert_id,
                                "Title": alert.product.title,

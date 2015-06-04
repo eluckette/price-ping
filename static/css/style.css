@@ -9,14 +9,9 @@ body { padding-bottom: 100px; }
 	height: 100%;
 }
 
-.searchItem {
-	text-align: center;
-	vertical-align: bottom;
-}
-
 td {
-	vertical-align:bottom;
 	text-align:center;
+	bottom: 0px;
 }
 
 #footer {
