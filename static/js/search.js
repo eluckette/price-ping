@@ -11,7 +11,7 @@ $(document).ready(function() {
 
 	$(".submitSearch").on("click", sendSearch);
 
-	$('.pagination').on('click', refresh);
+	$(".pagination").on("click", refresh);
 });
 
 

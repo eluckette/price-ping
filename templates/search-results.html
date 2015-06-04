@@ -2,38 +2,7 @@
 {% block content %}
 <script src="/static/js/search.js"></script>
 
-<div class="jumbotron container-fluid">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-4">
-				<div class="input-group">
-					<div class="input-group-btn">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Category <span class="caret"></span></button>
-						<ul class="dropdown-menu" role="menu">
-						<li><a href="#">All</a></li>
-						<li><a href="#">Apparel</a></li>
-						<li><a href="#">Beauty</a></li>
-						<li><a href="#">Books</a></li>
-						<li><a href="#">Electronics</a></li>
-						<li><a href="#">Tools</a></li>
-						<li><a href="#">Toys</a></li>
-						</ul>
-					</div>
-
-					<input type="text" class="form-control" id="userSearch">
-
-					<div class="input-group-btn">
-						<button type="button" class="btn btn-default submitSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>	
-	
-<br>
 <div class="loader" style="display: none"></div>
-
 
 <div class="container">
 	<p><span id="itemNumOne"></span> - <span id="itemNumTwo"></span> of 100 results for "{{ user_input }}"</p>
@@ -50,7 +19,8 @@
 
 	<div id="pagination">
 		{% for page in range(pages) %}
-			<button type="button" class="btn btn-primary pagination" id="{{ page + 1 }}">{{ page +1 }}</button>
+			<a href="#" class="pagination" id="{{ page + 1 }}">{{ page +1 }}</a>
+<!-- 			<button type="button" class="btn btn-primary pagination" id="{{ page + 1 }}">{{ page +1 }}</button> -->
 		{% endfor %}
 	<div>
 
