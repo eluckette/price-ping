@@ -9,9 +9,14 @@ body { padding-bottom: 100px; }
 	height: 100%;
 }
 
-td {
+#searchTable td {
 	text-align:center;
-	bottom: 0px;
+	vertical-align: bottom;
+}
+
+.searchItem {
+	display: inline-block;
+	vertical-align: bottom;
 }
 
 #footer {

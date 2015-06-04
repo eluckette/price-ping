@@ -278,22 +278,16 @@ def make_json(search_results):
 
 def make_alert_home_json(alerts):
 
-    current_alerts = []
+    home_page_alerts = []
     for alert in alerts:
 
-        if alert.expiration_date:
-            expiration_date = unicode(alert.expiration_date.month)+"/"+unicode(alert.expiration_date.day)+"/"+unicode(alert.expiration_date.year)
-        else:
-            expiration_date = " "
-
-        current_alerts.append({"Alert_id": alert.alert_id,
-                               "Title": alert.product.title,
-                               "Price": alert.product.price,
-                               "Expiration_date": expiration_date,
-                               "Image_URL": alert.product.image_url})
-    current_alerts_obj = {}
-    current_alerts_obj["alerts"] = current_alerts
-    json_obj = current_alerts_obj
+        home_page_alerts.append({"ASIN": alert.product.asin,
+                                 "Image_URL": alert.product.image_url,
+                                 "Title": alert.product.title,
+                                 "Price": alert.product.price})
+    home_page_alerts_obj = {}
+    home_page_alerts_obj["alerts"] = home_page_alerts
+    json_obj = home_page_alerts_obj
     return json_obj
 
 def make_alert_json(alerts):
