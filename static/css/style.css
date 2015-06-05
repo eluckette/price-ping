@@ -20,12 +20,20 @@ a {
 
 .pagination {
 	font-size: 20px;
-	margin-right: 5px;
+	padding: 0 3px;
+}
+
+#pagination {
+	text-align: center;
 }
 
 .navbar { 
 	margin-bottom:0px;
-	font-size: 16px;
+	font-size: 15px;
+}
+
+.navbar-default .navbar-collapse{
+	padding: 0;
 }
 
 #searchTable {
@@ -43,9 +51,13 @@ a {
 	vertical-align: bottom;
 }
 
-#footer {
-	height:100px;
-	background-color: #2F3842;
+.inputField {
+	width: 250px;
+}
+
+#otherAlerts td{
+	text-align: center;
+	vertical-align: bottom;
 }
 
 .loader {

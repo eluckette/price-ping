@@ -33,7 +33,8 @@ def manipulated_product_check():
 
     active_alerts = session.query(Alert).filter_by(active=1).all()
 
-    for a in active_alerts[:1]:
+    for a in active_alerts[1:2]:
+
         current_search = api.item_lookup(a.product.asin, MerchantId='Amazon',
                                          ResponseGroup='Offers, Images, ItemAttributes')
 
@@ -59,7 +60,8 @@ def manipulated_product_check():
 def send_text(title, link):
 
         url = str(link)
-        shortener = Shortener('TinyurlShortener')
+        shortener = Shortener('TinyurlShortener') 
+        print "My short url is {}".format(shortener.short(url))
         text_link = format(shortener.short(url))
 
         text_body = "Price has lowered for " + title + " " + text_link
@@ -71,12 +73,6 @@ def send_text(title, link):
         )
 
 
-def do_every(interval, function, iterations):
-    if iterations != 0:
-        threading.Timer(interval, do_every, [interval, function, 0 if iterations == 0 else iterations-1]).start()
-        function()
-
 
 if __name__ == '__main__':
-    do_every(120, manipulated_product_check, 2)
-    # manipulated_product_check()
+    manipulated_product_check()

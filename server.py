@@ -2,7 +2,7 @@ import os
 import amazonproduct
 import json
 from jinja2 import StrictUndefined
-from flask import Flask, render_template, request, flash, session, jsonify
+from flask import Flask, render_template, redirect, request, flash, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from model import User, Product, Alert, UserSearch, connect_to_db, db
 from datetime import datetime
@@ -23,7 +23,6 @@ api = amazonproduct.API(cfg=amazon_api_config)
 
 @app.route('/')
 def index():
-
     if not session['username']:
         session['username'] = 1
 
@@ -262,19 +261,33 @@ def unpack_args():
 
 
 def make_json(search_results):
-
+    # print dir(search_results)
     search_results_list = []
     for item in search_results:
-        search_results_list.append({"ASIN": unicode(item.ASIN),
-                                    "Title": unicode(item.ItemAttributes.Title),
-                                    "Image_URL": unicode(item.ImageSets.ImageSet.MediumImage.URL),
-                                    "Price_f": unicode(item.Offers.Offer.OfferListing.Price.FormattedPrice),
-                                    "Price": unicode(item.Offers.Offer.OfferListing.Price.Amount),
-                                    "Link": unicode(item.ItemLinks.ItemLink.URL)})
+        
+        try: 
+            asin = unicode(item.ASIN)
+            title = unicode(item.ItemAttributes.Title)
+            image_url = unicode(item.ImageSets.ImageSet.MediumImage.URL)
+            price = unicode(item.Offers.Offer.OfferListing.Price.Amount)
+            price_f = unicode(item.Offers.Offer.OfferListing.Price.FormattedPrice)
+            link = unicode(item.ItemLinks.ItemLink.URL)
+        
+        except AttributeError: 
+            continue
+
+        search_results_list.append({"ASIN": asin,
+                                    "Title": title,
+                                    "Image_URL": image_url,
+                                    "Price_f": price_f,
+                                    "Price": price,
+                                    "Link": link})
+    
     search_results_dict = {}
     search_results_dict["items"] = search_results_list
     json_string = json.dumps(search_results_dict)
     return json_string
+
 
 def make_alert_home_json(alerts):
 
@@ -289,6 +302,7 @@ def make_alert_home_json(alerts):
     home_page_alerts_obj["alerts"] = home_page_alerts
     json_obj = home_page_alerts_obj
     return json_obj
+
 
 def make_alert_json(alerts):
 
@@ -313,7 +327,7 @@ def make_alert_json(alerts):
 
 if __name__ == "__main__":
 
-    app.debug = True
+    app.debug = False
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
     connect_to_db(app)
