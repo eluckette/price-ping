@@ -73,8 +73,8 @@ function setModal(evt) {
 
 	$('.modal-body').html("<img src="+data.image+"> <br>"+ 
 						  data.title+ "<br>" +
-						  data.price_f+
-						  "<form><label for='alert-price-field'>Enter maximum price:</label> <input type='number' min='0' max='100' name='alert-price' id='alert-price-field'><br><br><label for'alert-length-field'>Length of notification (days):</label> <input type='number' min='1' max='5' name='alert-length' id='alert-length-field'> </form> <button type='button' class='submit-item btn btn-submit' data-title='"+data.title+"' data-price='"+data.price+"' data-asin='"+data.asin+"'>Submit</button>"+"<br><br><p>*You can manage alerts in My Account");
+						  data.price_f+"<br><br>"+
+						  "<form><label for='alert-price-field'>Enter maximum price:</label><br> <input type='number' class='inputField' min='0' max='100' name='alert-price' id='alert-price-field'><br><br><label for'alert-length-field'>Length of notification (days):</label><br><input type='number' class='inputField' min='1' max='5' name='alert-length' id='alert-length-field'> </form> <br><br><button type='button' class='submit-item btn btn-submit' data-title='"+data.title+"' data-price='"+data.price+"' data-asin='"+data.asin+"'>Submit</button>"+"<br><br><p class='note'>*You can manage alerts in My Account");
 	
 	$('#setNotification').modal('show');
 	$('.submit-item').on("click", updateAlert);

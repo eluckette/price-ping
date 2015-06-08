@@ -4,7 +4,8 @@
   <title>X HB Project X</title>
   <link rel="stylesheet" href="/static/css/bootstrap.min.css">
   <link rel="stylesheet" href="/static/css/style.css">
-  <link href='http://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed' rel='stylesheet' type='text/css'>
+<!--   <link href='http://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed' rel='stylesheet' type='text/css'> -->
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200italic,300italic|Roboto+Condensed:300italic,400italic,400' rel='stylesheet' type='text/css'>
   <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
   <script src="https:////maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </head>
@@ -21,7 +22,7 @@
     <div class="container">
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-          <li><a href="/">Search</a></li>
+          <li><a href="/">Price Ping</a></li>
         </ul>
         <ul class="nav navbar-nav">
             {% if session['username'] == 1 %}
@@ -93,33 +94,44 @@
   </div>
 
   <div class="jumbotron container-fluid">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-2">
-        <img src="/static/images/logo.png" width="120px">
-      </div>
-      <div class="col-md-4 searchBar">
-        <div class="input-group">
-          <div class="input-group-btn">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Category <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu">
-            <li><a href="#">All</a></li>
-            <li><a href="#">Apparel</a></li>
-            <li><a href="#">Beauty</a></li>
-            <li><a href="#">Books</a></li>
-            <li><a href="#">Electronics</a></li>
-            <li><a href="#">Tools</a></li>
-            <li><a href="#">Toys</a></li>
-            </ul>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2">
+          <img src="/static/images/logo.png" width="120px">
+        </div>
+        <div class="col-md-6">
+          <div class="slogan">
+            <h3>Set custom text alerts</h3>
+            <h3>Be the frirst to know about price changes</h3>
           </div>
-          <input type="text" class="form-control" id="userSearch">
-          <div class="input-group-btn">
-            <button type="button" class="btn btn-default submitSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6 col-md-offset-2 searchBar">
+          <div class="input-group">
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-search dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Category <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu">
+              <li><a href="#">All</a></li>
+              <li><a href="#">Apparel</a></li>
+              <li><a href="#">Beauty</a></li>
+              <li><a href="#">Books</a></li>
+              <li><a href="#">Electronics</a></li>
+              <li><a href="#">Tools</a></li>
+              <li><a href="#">Toys</a></li>
+              </ul>
+            </div>
+      
+            <input type="text" class="form-control" id="userSearch">
+      
+            <div class="input-group-btn">
+              <button type="button" class="btn btn-submit submitSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   </div>
 
   <!-- This is where the main content goes. -->
