@@ -24,7 +24,7 @@
         <ul class="nav navbar-nav">
           <li><a href="/">Price Ping</a></li>
         </ul>
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav navbar-right">
             {% if session['username'] == 1 %}
             <li><a data-toggle="collapse" href="#signIn" aria-expanded="false" aria-controls="signIn">Sign In</a></li>
             <li><a data-toggle="collapse" href="#register" aria-expanded="false" aria-controls="register">Register</a></li>
@@ -99,10 +99,10 @@
         <div class="col-md-2">
           <img src="/static/images/logo.png" width="120px">
         </div>
-        <div class="col-md-6">
+        <div class="col-md-7">
           <div class="slogan">
-            <h3>Set custom text alerts</h3>
-            <h3>Be the frirst to know about price changes</h3>
+            <h3>Be the first to know about price changes</h3>
+            <h4>Create text alerts for products you want</h4>
           </div>
         </div>
       </div>
@@ -123,10 +123,10 @@
               </ul>
             </div>
       
-            <input type="text" class="form-control" id="userSearch">
+            <input type="text" class="form-control search-text" id="userSearch">
       
             <div class="input-group-btn">
-              <button type="button" class="btn btn-submit submitSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+              <button type="button" class="btn btn-search submitSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
             </div>
           </div>
         </div>

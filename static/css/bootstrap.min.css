@@ -51,10 +51,11 @@ fieldset[disabled] .btn-submit.active {
 }
 
 
+
 .btn-search { 
-  color: #000; 
-  background-color: #C0C0C0; 
-  border-color: #FFFFFF; 
+  color: #ffffff; 
+  background-color: #FF9900; 
+  border-color: #FF9900; 
 } 
  
 .btn-search:hover, 
@@ -62,9 +63,9 @@ fieldset[disabled] .btn-submit.active {
 .btn-search:active, 
 .btn-search.active, 
 .open .dropdown-toggle.btn-search { 
-  color: #000; 
-  background-color: #F0F0F0; 
-  border-color: #FFFFFF; 
+  color: #ffffff; 
+  background-color: #FFBB54; 
+  border-color: #FF9900; 
 } 
  
 .btn-search:active, 
@@ -88,11 +89,11 @@ fieldset[disabled] .btn-search:active,
 .btn-search.disabled.active, 
 .btn-search[disabled].active, 
 fieldset[disabled] .btn-search.active { 
-  background-color: #A0A0A0; 
-  border-color: #FFFFFF; 
+  background-color: #FF9900; 
+  border-color: #FF9900; 
 } 
  
 .btn-search .badge { 
-  color: #FFFFFF; 
-  background-color: #FFFFFF; 
+  color: #FF9900; 
+  background-color: #ffffff; 
 }

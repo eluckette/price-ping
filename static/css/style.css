@@ -23,11 +23,11 @@ a {
 }
 
 .searchBar {
-	margin-top: -30px;
+	margin-top: -50px;
 }
 
-.form-control {
-	border: #000;
+.search-text {
+	border: #2F3842;
 }
 
 /* search results */
@@ -73,6 +73,11 @@ a {
 
 .inputField {
 	width: 250px;
+}
+
+.btn-block {
+	width: 250px;
+	margin: auto;
 }
 
 /* home page alerts */
