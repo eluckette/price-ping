@@ -26,7 +26,7 @@ Price Ping allows users to search and set price notifications for Amazon product
 - Input values are used to create the API call to Amazon. 
 - API response is an XML object, the server then iterates through the XML object to retreive products and product attributes to create a JSON string that is saved in the database. 
 
-**Trending Alerts**
+**See what others are setting alerts for**
 - The server queriers the database for five random alert_id's from all users profiles. 
 - AJAX get request to load trending alerts on homepage. 
 
@@ -46,7 +46,7 @@ Price Ping allows users to search and set price notifications for Amazon product
 **Current Alerts**
 - All of the users current, active alerts are shown.
 
-**You recently looked at***
+**Your recently viewed items**
 - This column shows the last three items the user selected, but did not set an alert for. 
 
 ## Get Price Ping Running on Your Machine
