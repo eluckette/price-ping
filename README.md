@@ -34,16 +34,23 @@ Price Ping allows users to search and set price notifications for Amazon product
 
 ### Search Results
 
+![alt search-results](https://raw.github.com/eluckette/price-ping/master/static/images/search-results.png)
+
 - AJAX get request to retrieve JSON string that was created on user search. 
 - When new page is selected, get request to refresh page results
 
 **Selecting a Product**
+
+![alt alert-preferences](https://raw.github.com/eluckette/price-ping/master/static/images/alert-preferences.png)
+
 - Each products has link to open modal window. 
 - Modal window displays product, product attributes and input boxes for user to set price alert preferences
 - When window is originally opened, product information and corresponding user id are saved to the alerts table in the database as an inactive alert. 
 - If the user submits information in the window, the alert information is sent to the server with a post request and the inactive alert is now changed to active.
  
 ### My Account
+
+![alt my-account](https://raw.github.com/eluckette/price-ping/master/static/images/my-account.png)
 
 **Current Alerts**
 - All of the users current, active alerts are shown.
