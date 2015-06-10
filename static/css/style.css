@@ -4,22 +4,12 @@ body {
 	font-size: 16px;
 }
 
-
 a {
 	color: #2F3842;
 }
 
-h3 {
+h3, h4, th {
 	font-family: 'Open Sans', sans-serif;
-}
-
-h4 {
-	font-family: 'Open Sans', sans-serif;
-}
-
-th {
-	font-family: 'Open Sans', sans-serif;
-	font-weight: 700;
 }
 
 /* jumbotron */
@@ -95,6 +85,17 @@ th {
 #otherAlerts td{
 	text-align: center;
 	vertical-align: bottom;
+}
+
+/* user account */
+
+#alertTable th {
+	text-align: center;
+}
+
+#prevViewed {
+	margin-top: 30px;
+	text-align: center;
 }
 
 /* loading gif */

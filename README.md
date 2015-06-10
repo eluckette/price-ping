@@ -21,6 +21,8 @@ Price Ping allows users to search and set price notifications for Amazon product
 
 ### Homepage
 
+![alt home-page](https://raw.github.com/eluckette/price-ping/master/static/images/home-page.png)
+
 **Search Bar**
 - User selects category from dropdown and enters search term into text field
 - Input values are used to create the API call to Amazon. 
