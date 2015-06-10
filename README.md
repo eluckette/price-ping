@@ -58,6 +58,16 @@ Price Ping allows users to search and set price notifications for Amazon product
 **Your recently viewed items**
 - This column shows the last three items the user selected, but did not set an alert for. 
 
+### Text Notifications
+
+![alt sample-text](https://raw.github.com/eluckette/price-ping/master/static/images/sample-text.PNG)
+
+- Text notifications are sent using Twilio API
+- Separate .py file is run hourly to query for active alerts
+- An API call to Amazon is formed for each active alert
+- The current price of the product is compared to the alert price set by the user
+- If the current price is equal or lower than the alert price, a text is sent to the user with a link to the product
+
 ## Get Price Ping Running on Your Machine
 
 Clone or fork this repo: 

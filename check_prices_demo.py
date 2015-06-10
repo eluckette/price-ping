@@ -1,6 +1,7 @@
 import os
 import amazonproduct
 import threading 
+import random
 from model import Alert, PriceReport
 from datetime import datetime
 from twilio.rest import TwilioRestClient
@@ -30,10 +31,13 @@ client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 
 def manipulated_product_check():
     """manipulates price of alert to test text to user"""
+    choose_from = [3, 11, 21, 28, 32, 53, 72, 92, 94, 101]
+    rand_id = random.sample(choose_from, 1)
+    rand_id = int(rand_id[0])
 
-    active_alerts = session.query(Alert).filter_by(active=1).all()
+    active_alerts = session.query(Alert).filter_by(alert_id=rand_id).all()
 
-    for a in active_alerts[1:2]:
+    for a in active_alerts:
 
         current_search = api.item_lookup(a.product.asin, MerchantId='Amazon',
                                          ResponseGroup='Offers, Images, ItemAttributes')
@@ -54,7 +58,7 @@ def manipulated_product_check():
 
         session.add(price_report)
         session.commit()
-        print "added price_report for product #: ", a.product.asin
+        print "Added price_report for product #:", a.product.asin
 
 
 def send_text(title, link):
@@ -71,6 +75,9 @@ def send_text(title, link):
             from_="+14159643618",
             body=text_body,
         )
+
+        print "Sent text"
+
 
 
 
