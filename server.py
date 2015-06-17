@@ -23,8 +23,8 @@ api = amazonproduct.API(cfg=amazon_api_config)
 
 @app.route('/')
 def index():
-    if not session['username']:
-        session['username'] = 1
+    # if not session['username']:
+    session['username'] = 2
 
     return render_template('index.html')
 
@@ -82,7 +82,8 @@ def log_out():
 @app.route('/get-other-alerts')
 def get_popular_alerts():
 
-    list_search_id = random.sample(range(1, Alert.query.count()), 5)
+    # list_search_id = random.sample(range(1, Alert.query.count()), 5)
+    list_search_id = [91, 11, 89, 85, 146]
     other_searches = [Alert.query.filter_by(alert_id=x).one()
                       for x in list_search_id]
     json_obj = make_alert_home_json(other_searches)
@@ -132,20 +133,23 @@ def show_results():
         category = request.form['category']
         user_input = request.form['user_input']
 
-    search_results = api.item_search(category, Keywords=user_input,
-                                     MerchantId='Amazon',
-                                     ResponseGroup='Offers, ItemAttributes, Images')
+    # search_results = api.item_search(category, Keywords=user_input,
+    #                                  MerchantId='Amazon',
+    #                                  ResponseGroup='Offers, ItemAttributes, Images')
 
-    json_string = make_json(search_results)
+    # json_string = make_json(search_results)
 
-    user_search = UserSearch(user_id=user.user_id,
-                             category=category,
-                             user_input=user_input,
-                             search_results=json_string)
-    db.session.add(user_search)
-    db.session.commit()
+    # user_search = UserSearch(user_id=user.user_id,
+    #                          category=category,
+    #                          user_input=user_input,
+    #                          search_results=json_string)
+    # db.session.add(user_search)
+    # db.session.commit()
     
-    session['search_id'] = user_search.user_search_id
+    # session['search_id'] = user_search.user_search_id
+
+    # changed for demo
+    session['search_id'] = 181
 
     return render_template('search-results.html', pages=5,
                            user_input=user_input)
